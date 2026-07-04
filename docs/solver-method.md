@@ -120,5 +120,4 @@ Run:
 python scripts/plot_quadrants.py
 ```
 
-This regenerates the four images under `docs/images` from the result CSV files.
-
+This regenerates the Chinese and English images under `docs/images` from the result CSV files.

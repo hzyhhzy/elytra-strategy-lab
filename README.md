@@ -68,10 +68,10 @@ The control points are allowed to be nonmonotone in angle.
 
 | Result | Summary | Data | Plot |
 |---|---:|---|---|
-| From rest, gain at least 2 blocks with minimum drop | minimum initial height `35.1216888246`, target `217 tick`, target x `162.930961` | `results/from-rest-gain-two` | ![](docs/images/from-rest-gain-two.png) |
-| From rest, return to original height with minimum drop | minimum initial height `32.3476213893`, return `208 tick`, return x `150.941124` | `results/from-rest-return-height` | ![](docs/images/from-rest-return-height.png) |
-| Fastest steady-state climb rate | period `254 tick`, climb `1.547442 blocks/s`, dy `+19.652515`, horizontal `22.732565 blocks/s` | `results/fastest-climb-rate` | ![](docs/images/fastest-climb-rate.png) |
-| Fastest steady-state horizontal speed with nonnegative height | period `357 tick`, horizontal `32.993197 blocks/s`, dy `+0.0000608` | `results/fastest-horizontal-speed` | ![](docs/images/fastest-horizontal-speed.png) |
+| From rest, gain at least 2 blocks with minimum drop | minimum initial height `35.1216888246`, target `217 tick`, target x `162.930961` | `results/from-rest-gain-two` | ![](docs/images/from-rest-gain-two-en.png) |
+| From rest, return to original height with minimum drop | minimum initial height `32.3476213893`, return `208 tick`, return x `150.941124` | `results/from-rest-return-height` | ![](docs/images/from-rest-return-height-en.png) |
+| Fastest steady-state climb rate | period `254 tick`, climb `1.547442 blocks/s`, dy `+19.652515`, horizontal `22.732565 blocks/s` | `results/fastest-climb-rate` | ![](docs/images/fastest-climb-rate-en.png) |
+| Fastest steady-state horizontal speed with nonnegative height | period `357 tick`, horizontal `32.993197 blocks/s`, dy `+0.0000608` | `results/fastest-horizontal-speed` | ![](docs/images/fastest-horizontal-speed-en.png) |
 
 Each result folder contains:
 
@@ -121,6 +121,6 @@ All three embedded mod strategies loop while Elytra Optima is enabled. The first
 - `solvers/audit_segmented_local.cpp`: local auditor/refiner for segmented periodic candidates.
 - `solvers/nonperiodic_return_optimize.cpp`: nonperiodic from-rest return/gain-target optimizer.
 - `solvers/fourier_optimize.cpp`, `solvers/bspline_optimize.cpp`, `solvers/framewise_optimize.cpp`: exploratory parameterizations used before settling on the segmented curve.
-- `scripts/plot_quadrants.py`: regenerate the four quadrant plots from the CSV result files.
+- `scripts/plot_quadrants.py`: regenerate the Chinese and English quadrant plots from the CSV result files.
 
 For the search narrative, see [docs/solver-method.md](docs/solver-method.md).
