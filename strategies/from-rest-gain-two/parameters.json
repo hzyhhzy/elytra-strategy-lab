@@ -1,0 +1,32 @@
+{
+  "format": "elytra-nonperiodic-return-v1",
+  "description": "From zero initial velocity, minimize maximum drop before reaching the target relative height.",
+  "tickRate": 20,
+  "angleUnit": "degrees",
+  "angleConvention": "positive angle means nose-up; negative angle means nose-down",
+  "minecraftPitchConvention": "minecraft_pitch_degrees = -angle_degrees",
+  "initialState": {"x": 0, "y": 0, "vx": 0, "vy": 0},
+  "target": "first tick with y >= targetRelativeY after launch",
+  "targetRelativeY": 2,
+  "minimumInitialHeightBlocks": 35.121688824613173,
+  "returnTick": 217,
+  "returnTimeSeconds": 10.85,
+  "minTick": 144,
+  "periodic": false,
+  "controlFormat": "segmented-bezier-v1-compatible",
+  "controlPointSpacing": {"type": "cosine_endpoint_dense", "formula": "x_i = 0.5 - 0.5 * cos(pi * i / (controlCount - 1))"},
+  "segments": {
+    "negativeConstantTicks": 0,
+    "negativeTransitionLinearTicks": 0,
+    "negativeBezierTicks": 128,
+    "holdZeroAfterNegativeTicks": 14,
+    "positiveRampLinearTicks": 5,
+    "positiveHoldTicks": 0,
+    "positiveBezierToZeroTicks": 271,
+    "holdZeroEndTicks": 40
+  },
+  "negativeConstantAngle": -88.619359825549679,
+  "negativeBezierControls": [-0.01, -0.01, -0.01, -23.154733257869417, -15.716026296569407, -63.858448303099955, -9.9305515721390254, -49.105993352669849],
+  "positiveBezierControls": [60.001952855162841, 22.239818113109809, 8.794913186308051, 5.5590291648426806, 0.065126229132976804, 17.541921762239856, 60.365737263388233, 0],
+  "returnState": {"x": 162.9309614230564, "y": 2.0000560628310242, "vx": 0.2238038771746351, "vy": 0.0090252665589720844}
+}

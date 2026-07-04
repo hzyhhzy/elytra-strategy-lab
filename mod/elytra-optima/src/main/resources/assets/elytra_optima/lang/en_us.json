@@ -1,0 +1,7 @@
+{
+  "category.elytra_optima": "Elytra Optima",
+  "key.elytra_optima.toggle": "Toggle Elytra Optima",
+  "key.elytra_optima.cycle_strategy": "Cycle strategy",
+  "modmenu.nameTranslation.elytra_optima": "Elytra Optima",
+  "modmenu.descriptionTranslation.elytra_optima": "Keys: H toggles Elytra Optima, J cycles strategies.\nGitHub: https://github.com/hzyhhzy/elytra-strategy-lab\nPitch-only Elytra strategy mod using optimized flight profiles: min-start-height launch (>35 m), fastest climb (~20 m/cycle), and fastest horizontal flight (~33 m/s)."
+}

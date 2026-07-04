@@ -1,0 +1,86 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+def toolsDirCandidates = [
+    file("${rootDir}/../../.tools"),
+    file("${rootDir}/../.tools"),
+    file("${rootDir}/../../../.tools")
+]
+def toolsDir = toolsDirCandidates.find { it.exists() } ?: toolsDirCandidates[0]
+def minecraftClientJar = file("${System.getProperty('user.home')}/.gradle/caches/fabric-loom/${project.minecraft_version}/minecraft-client.jar")
+def fabricCompileLibs = file("${toolsDir}/fabric-compile-libs")
+def minecraftLibraries = file("${toolsDir}/minecraft-libraries")
+
+configurations {
+    minecraftCompileOnly
+}
+
+dependencies {
+    compileOnly files(minecraftClientJar)
+    compileOnly fileTree(dir: fabricCompileLibs, include: '*.jar')
+    compileOnly fileTree(dir: minecraftLibraries, include: '**/*.jar')
+}
+
+tasks.register('verifyCompileInputs') {
+    doLast {
+        def required = [minecraftClientJar, fabricCompileLibs, minecraftLibraries]
+        required.each {
+            if (!it.exists()) {
+                throw new GradleException("Missing compile input: ${it}. Run the local dependency bootstrap used in this workspace first.")
+            }
+        }
+    }
+}
+
+compileJava {
+    dependsOn tasks.named('verifyCompileInputs')
+    options.encoding = 'UTF-8'
+    options.release = (project.java_version as String).toInteger()
+}
+
+processResources {
+    inputs.property 'version', project.version
+    inputs.property 'minecraft_version', project.minecraft_version
+    inputs.property 'loader_version', project.loader_version
+    inputs.property 'java_version', project.java_version
+
+    filesMatching('fabric.mod.json') {
+        expand(
+            version: project.version,
+            minecraft_version: project.minecraft_version,
+            loader_version: project.loader_version,
+            java_version: project.java_version
+        )
+    }
+}
+
+java {
+    withSourcesJar()
+    toolchain {
+        languageVersion = JavaLanguageVersion.of((project.java_version as String).toInteger())
+    }
+}
+
+jar {
+    from('LICENSE') {
+        rename { "${it}_${project.base.archivesName.get()}" }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = project.archives_base_name
+            from components.java
+        }
+    }
+}

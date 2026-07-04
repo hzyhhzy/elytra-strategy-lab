@@ -1,0 +1,15 @@
+.gradle/
+build/
+*.class
+*.obj
+*.exe
+*.pdb
+*.ilk
+*.user
+*.log
+.tools/
+__pycache__/
+.venv/
+.idea/
+.vscode/
+

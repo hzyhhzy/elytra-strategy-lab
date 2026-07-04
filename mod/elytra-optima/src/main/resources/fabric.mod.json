@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "elytra_optima",
+  "version": "${version}",
+  "name": "Elytra Optima",
+  "description": "Keys: H toggles Elytra Optima, J cycles strategies.\nGitHub: https://github.com/hzyhhzy/elytra-strategy-lab\nPitch-only Elytra strategy mod using optimized flight profiles: minimum-start-height launch (>35 m), fastest climb (~20 m/cycle), and fastest horizontal flight (~33 m/s).",
+  "icon": "assets/elytra_optima/icon.png",
+  "authors": [
+    "hzyhhzy",
+    "Codex"
+  ],
+  "contact": {
+    "homepage": "https://github.com/hzyhhzy/elytra-strategy-lab",
+    "sources": "https://github.com/hzyhhzy/elytra-strategy-lab",
+    "issues": "https://github.com/hzyhhzy/elytra-strategy-lab/issues"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "local.elytra.optima.ElytraOptimaClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "${minecraft_version}",
+    "java": ">=${java_version}",
+    "fabric-api": "*"
+  }
+}

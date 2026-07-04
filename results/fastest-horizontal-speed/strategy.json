@@ -1,0 +1,69 @@
+{
+  "format": "elytra-segmented-bezier-v1",
+  "name": "hard_speed_8_control_nonmonotone",
+  "description": "Maximize steady-state horizontal speed with nonnegative height change per cycle.",
+  "tickRate": 20,
+  "angleUnit": "degrees",
+  "angleConvention": "positive angle means nose-up; negative angle means nose-down",
+  "minecraftPitchConvention": "minecraft_pitch_degrees = -angle_degrees",
+  "optimizationTarget": "max_horizontal_speed_with_dy_ge_0",
+  "controlPointSpacing": {
+    "type": "cosine_endpoint_dense",
+    "formula": "x_i = 0.5 - 0.5 * cos(pi * i / (controlCount - 1))"
+  },
+  "controlCount": {
+    "negativeBezier": 8,
+    "positiveBezier": 8
+  },
+  "allowNonMonotoneControls": true,
+  "periodTicks": 357,
+  "segments": {
+    "negativeConstantTicks": 10,
+    "negativeTransitionLinearTicks": 2,
+    "negativeBezierTicks": 246,
+    "holdZeroAfterNegativeTicks": 13,
+    "positiveRampLinearTicks": 3,
+    "positiveHoldTicks": 5,
+    "positiveBezierToZeroTicks": 70,
+    "holdZeroEndTicks": 8
+  },
+  "negativeConstantAngle": -89.5,
+  "negativeBezierControls": [
+    -32.84953798913042,
+    -40.13245184698956,
+    -22.468576627022838,
+    -44.7325714278412,
+    -49.26187641318844,
+    -22.776456702908604,
+    -66.27087681959183,
+    -38.24817494492914
+  ],
+  "positiveBezierControls": [
+    78.32703324587365,
+    45.31013945331428,
+    42.84497193184144,
+    16.96999777207822,
+    32.377854556287126,
+    1.4634826880848515,
+    14.955641228893784,
+    0
+  ],
+  "steadyStateMetrics": {
+    "avgHorizontalBlocksPerSecond": 32.993196614258494,
+    "dyBlocksPerCycle": 0.00006078552738975063,
+    "dxBlocksPerCycle": 588.9285595645142,
+    "climbRateBlocksPerSecond": 0.000003405351674495833,
+    "meanAbsDeltaDegreesPerTick": 1.0211535105120757,
+    "rmsDeltaDegreesPerTick": 6.1061274919976745,
+    "maxAbsDeltaDegreesPerTick": 89.5,
+    "cyclesUsedForValidation": 10,
+    "converged": true
+  },
+  "sourceArtifacts": {
+    "paramsCsv": "../segmented_bezier8_cos_nonmono_speed_hard_audit_final/best_params.csv",
+    "waveformCsv": "../segmented_bezier8_cos_nonmono_speed_hard_audit_final/best_waveform.csv",
+    "waveformSimpleCsv": "../segmented_bezier8_cos_nonmono_speed_hard_audit_final/best_waveform_simple.csv",
+    "trajectoryCsv": "../segmented_bezier8_cos_nonmono_speed_hard_audit_final/best_trajectory.csv",
+    "plotPng": "../segmented_bezier8_cos_nonmono_speed_hard_audit_final/segmented_bezier8_cos_nonmono_speed_hard_audit_final.png"
+  }
+}

@@ -1,0 +1,353 @@
+:root {
+  color-scheme: light;
+  --ink: #10212a;
+  --muted: #5e7078;
+  --panel: rgba(250, 253, 252, 0.88);
+  --panel-strong: rgba(255, 255, 255, 0.96);
+  --line: rgba(16, 33, 42, 0.16);
+  --accent: #007e86;
+  --accent-2: #d56a1d;
+  --grass: #3b8b4a;
+  --stone: #69767a;
+  --danger: #b42318;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  color: var(--ink);
+  background: #b9e5ff;
+}
+
+button {
+  min-width: 66px;
+  height: 51px;
+  border: 1.5px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  background: var(--panel-strong);
+  font: inherit;
+  font-size: 19.5px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+button:hover {
+  border-color: rgba(0, 126, 134, 0.5);
+  background: #eefdfb;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.app-shell {
+  width: 100%;
+  height: 100%;
+}
+
+.flight-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #b9e5ff;
+}
+
+#flightCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.hud {
+  position: absolute;
+  z-index: 3;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 21px 54px rgba(16, 33, 42, 0.15);
+  backdrop-filter: blur(12px);
+}
+
+.hud-left {
+  top: 24px;
+  left: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(168px, 1fr));
+  gap: 12px;
+  width: min(540px, calc(100vw - 48px));
+  padding: 15px;
+}
+
+.metric,
+.score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 57px;
+  gap: 18px;
+  padding: 10.5px 13.5px;
+  border: 1.5px solid rgba(16, 33, 42, 0.09);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.metric span,
+.score-row span {
+  color: var(--muted);
+  font-size: 18px;
+  white-space: nowrap;
+}
+
+.metric strong,
+.score-row strong {
+  font-size: 22.5px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.hud-right {
+  top: 24px;
+  right: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: 360px;
+  padding: 15px;
+}
+
+.toolbar {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+}
+
+.toolbar button {
+  width: 100%;
+}
+
+.toolbar button.is-active {
+  border-color: rgba(0, 126, 134, 0.7);
+  color: #ffffff;
+  background: var(--accent);
+}
+
+.strategy-selector {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+  margin-top: 9px;
+}
+
+.strategy-selector button {
+  width: 100%;
+}
+
+.strategy-selector button.is-active {
+  border-color: rgba(213, 106, 29, 0.72);
+  color: #ffffff;
+  background: var(--accent-2);
+}
+
+.strategy-info {
+  grid-column: 1 / -1;
+  min-height: 69px;
+  padding: 12px 13.5px;
+  border: 1.5px solid rgba(16, 33, 42, 0.09);
+  border-radius: 6px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.55);
+  font-size: 18px;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+
+.pitch-strip {
+  position: absolute;
+  top: 50%;
+  right: 420px;
+  z-index: 2;
+  width: 10.5px;
+  height: min(51vh, 390px);
+  max-height: calc(100vh - 285px);
+  min-height: 270px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #2a9d64 0%, #e8f4f2 50%, #b54836 100%);
+  box-shadow: 0 0 0 1px rgba(16, 33, 42, 0.18);
+}
+
+.pitch-marker {
+  position: absolute;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 4px 12px rgba(16, 33, 42, 0.26);
+}
+
+.formula-panel {
+  position: absolute;
+  z-index: 5;
+  top: 138px;
+  right: 24px;
+  display: none;
+  width: min(645px, calc(100vw - 48px));
+  max-height: calc(100vh - 174px);
+  overflow: auto;
+  padding: 21px;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-strong);
+  box-shadow: 0 20px 50px rgba(16, 33, 42, 0.22);
+}
+
+.formula-panel.open {
+  display: block;
+}
+
+.formula-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 15px;
+}
+
+.formula-head h1 {
+  margin: 0;
+  font-size: 25.5px;
+  line-height: 1.25;
+}
+
+.formula-panel pre {
+  margin: 0;
+  padding: 18px;
+  overflow: auto;
+  border: 1.5px solid rgba(16, 33, 42, 0.1);
+  border-radius: 6px;
+  background: #f3f7f5;
+}
+
+.formula-panel code {
+  font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 18px;
+  line-height: 1.55;
+  color: #17313a;
+}
+
+.formula-panel p {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 19.5px;
+  line-height: 1.55;
+}
+
+.source-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 18px;
+  font-size: 19.5px;
+}
+
+.status-banner {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: 42px;
+  min-width: 240px;
+  transform: translateX(-50%);
+  padding: 18px 27px;
+  border: 1.5px solid rgba(16, 33, 42, 0.18);
+  border-radius: 8px;
+  color: #ffffff;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0;
+  background: rgba(180, 35, 24, 0.9);
+  box-shadow: 0 14px 36px rgba(16, 33, 42, 0.22);
+}
+
+@media (max-width: 760px) {
+  .hud-left {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    top: 10px;
+    left: 10px;
+    width: calc(100vw - 20px);
+  }
+
+  .hud-right {
+    top: auto;
+    right: 10px;
+    bottom: 10px;
+    width: min(270px, calc(100vw - 20px));
+  }
+
+  .pitch-strip {
+    right: 14px;
+    height: min(44vh, 330px);
+    max-height: calc(100vh - 280px);
+  }
+
+  .formula-panel {
+    top: 112px;
+    right: 10px;
+    width: calc(100vw - 20px);
+    max-height: calc(100vh - 132px);
+  }
+
+  .metric,
+  .score-row {
+    min-height: 34px;
+    padding: 6px 7px;
+  }
+
+  .metric strong,
+  .score-row strong {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 460px) {
+  .hud-left {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 7px;
+  }
+
+  .metric span {
+    font-size: 11px;
+  }
+
+  .metric strong {
+    font-size: 12px;
+  }
+
+  .hud-right {
+    grid-template-columns: 1fr;
+  }
+}

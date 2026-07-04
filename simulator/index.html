@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Minecraft 鞘翅二维模拟器</title>
+    <link rel="stylesheet" href="./styles.css?v=20260704-scale75-range2">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="flight-stage" aria-label="Elytra simulator">
+        <canvas id="flightCanvas"></canvas>
+        <div class="hud hud-left" aria-live="polite">
+          <div class="metric">
+            <span>仰角</span>
+            <strong id="noseAngle">0.0 deg</strong>
+          </div>
+          <div class="metric">
+            <span>MC pitch</span>
+            <strong id="mcPitch">0.0 deg</strong>
+          </div>
+          <div class="metric">
+            <span>水平速度</span>
+            <strong id="vx">0.00 b/t</strong>
+          </div>
+          <div class="metric">
+            <span>垂直速度</span>
+            <strong id="vy">0.00 b/t</strong>
+          </div>
+          <div class="metric">
+            <span>总速度</span>
+            <strong id="speed">0.00 m/s</strong>
+          </div>
+          <div class="metric">
+            <span>高度</span>
+            <strong id="altitude">128.0</strong>
+          </div>
+        </div>
+        <div class="hud hud-right">
+          <div class="score-row">
+            <span>距离</span>
+            <strong id="distance">0 m</strong>
+          </div>
+          <div class="score-row">
+            <span>Tick</span>
+            <strong id="ticks">0</strong>
+          </div>
+          <div class="score-row">
+            <span>耐久</span>
+            <strong id="durability">432</strong>
+          </div>
+          <div class="toolbar" aria-label="Controls">
+            <button id="toggleRun" type="button" title="暂停或继续">暂停</button>
+            <button id="resetRun" type="button" title="重新开始">重置</button>
+            <button id="autoPilot" type="button" title="按选中的策略自动控制">自动</button>
+            <button id="formulaToggle" type="button" title="显示公式">公式</button>
+          </div>
+          <div class="strategy-selector" aria-label="自动控制策略">
+            <button id="strategyGainTwo" type="button" title="从静止出发，至少提升 2 格的最低下降高度策略">起步+2</button>
+            <button id="strategyReturnHeight" type="button" title="从静止出发，高度至少回到起点的最低下降高度策略">起步+0</button>
+            <button id="strategyClimb" type="button" title="最大平均爬升速度">爬升</button>
+            <button id="strategySpeed" type="button" title="高度不下降时最大水平速度">巡航</button>
+          </div>
+          <div id="strategyInfo" class="strategy-info" aria-live="polite"></div>
+        </div>
+        <div class="pitch-strip" aria-hidden="true">
+          <div id="pitchMarker" class="pitch-marker"></div>
+        </div>
+        <aside id="formulaPanel" class="formula-panel" aria-label="Formula panel">
+          <div class="formula-head">
+            <h1>Java 版鞘翅 tick 公式</h1>
+            <button id="closeFormula" type="button" title="关闭">关闭</button>
+          </div>
+          <pre><code>lookH = cos(pitch)
+lift = cos(pitch)^2 * min(1, |look| / 0.4)
+
+vy += -0.08 + lift * 0.06
+
+if (vy < 0) {
+  yAccel = vy * -0.1 * lift
+  vy += yAccel
+  vx += yAccel
+}
+
+if (pitch < 0) {
+  climb = |vx_old| * -sin(pitch) * 0.04
+  vy += climb * 3.2
+  vx -= climb
+}
+
+vx += (|vx_old| - vx) * 0.1
+vx *= 0.9900000095367432
+vy *= 0.9800000190734863</code></pre>
+          <p>二维化固定 yaw，只保留水平轴和垂直轴；pitch 仍采用 Minecraft 约定：负值抬头，正值低头。</p>
+          <div class="source-links">
+            <a href="https://maven.fabricmc.net/docs/yarn-1.21.4+build.1/net/minecraft/entity/LivingEntity.html" target="_blank" rel="noreferrer">Yarn LivingEntity</a>
+            <a href="https://mappings.dev/1.21.4/net/minecraft/world/entity/LivingEntity.html" target="_blank" rel="noreferrer">mappings.dev</a>
+            <a href="https://minecraft.fandom.com/wiki/Elytra" target="_blank" rel="noreferrer">Minecraft Wiki</a>
+          </div>
+        </aside>
+        <div id="statusBanner" class="status-banner" hidden>着陆</div>
+      </section>
+    </main>
+    <script src="./strategies-data.js?v=20260704-scale75-range2"></script>
+    <script src="./app.js?v=20260704-scale75-range2"></script>
+  </body>
+</html>
