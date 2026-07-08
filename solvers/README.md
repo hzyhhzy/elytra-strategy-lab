@@ -17,6 +17,18 @@ The periodic results currently checked in are already under:
 
 Because the optimizer is stochastic, long reruns may find slightly different or better candidates.
 
+## Raw per-frame L-BFGS-B max climb
+
+This reproduces the raw `1.562324772 blocks/s` max-climb reference result under `../results/lbfgsb-max-climb-raw`.
+
+It uses direct per-frame L-BFGS-B optimization after burn-in to periodic steady state. The first `165` ticks are bounded to nose-down or level pitch, and the remaining `90` ticks are bounded to nose-up or level pitch. No smoothness penalty is applied, so the result has severe pitch jitter.
+
+```powershell
+python lbfgsb_max_climb.py --period 255 --split 165
+```
+
+The script writes its rerun outputs to `../results/lbfgsb-max-climb-lbfgsb-run`.
+
 ## Periodic local audit
 
 ```powershell

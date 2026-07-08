@@ -1,0 +1,43 @@
+{
+  "format": "elytra-framewise-periodic-v1",
+  "name": "lbfgsb_max_climb_raw_jitter",
+  "description": "Direct per-frame L-BFGS-B solution for maximum steady-state climb rate. This is a research result, not a smooth player-friendly strategy.",
+  "tickRate": 20,
+  "angleUnit": "degrees",
+  "angleConvention": "positive angle means nose-up; negative angle means nose-down",
+  "minecraftPitchConvention": "minecraft_pitch_degrees = -angle_degrees",
+  "optimizationTarget": "max_climb_rate",
+  "periodTicks": 255,
+  "splitTick": 165,
+  "controlFormat": "per-frame bounded angles",
+  "bounds": {
+    "ticks0To164": "nose-down or level, [-90, 0] strategy angle",
+    "ticks165To254": "nose-up or level, [0, 90] strategy angle"
+  },
+  "steadyStateMetrics": {
+    "avgHorizontalBlocksPerSecond": 22.739532895253213,
+    "dyBlocksPerCycle": 19.919640847333334,
+    "dxBlocksPerCycle": 289.9290444144784,
+    "climbRateBlocksPerSecond": 1.5623247723398692,
+    "rmsDeltaDegreesPerTick": 36.15612249740114,
+    "maxAbsDeltaDegreesPerTick": 90.0,
+    "roughnessL2SecondDifference": 5093.046270369129,
+    "minRelativeYBlocks": -74.24811637300945,
+    "maxRelativeYBlocks": 19.919640847333334,
+    "closure": 0.0,
+    "converged": true
+  },
+  "notes": [
+    "This solution beats the smoother segmented climb-rate strategy in climb rate, but it contains severe frame-to-frame pitch oscillation.",
+    "The high-frequency segment alternates near the pitch bounds, with RMS angle delta about 36.16 degrees/tick and max delta 90 degrees/tick.",
+    "It is useful as an optimization reference and as evidence that unconstrained per-frame control can exploit very jittery policies."
+  ],
+  "sourceArtifacts": {
+    "solver": "../../solvers/lbfgsb_max_climb.py",
+    "summary": "summary.json",
+    "waveform": "waveform.csv",
+    "trajectory": "trajectory.csv",
+    "rawWaveformWithInternalPitch": "raw_waveform_full.csv",
+    "rawCycleWithInternalPitch": "raw_cycle_full.csv"
+  }
+}

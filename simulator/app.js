@@ -22,10 +22,15 @@
     strategySpeed: document.getElementById("strategySpeed"),
     strategyClimb: document.getElementById("strategyClimb"),
     strategyInfo: document.getElementById("strategyInfo"),
+    strategyChart: document.getElementById("strategyChart"),
+    strategyChartCanvas: document.getElementById("strategyChartCanvas"),
+    strategyChartTick: document.getElementById("strategyChartTick"),
+    strategyChartPeriod: document.getElementById("strategyChartPeriod"),
     formulaToggle: document.getElementById("formulaToggle"),
     formulaPanel: document.getElementById("formulaPanel"),
     closeFormula: document.getElementById("closeFormula"),
   };
+  const strategyChartCtx = hud.strategyChartCanvas.getContext("2d");
 
   const MC = Object.freeze({
     TICKS_PER_SECOND: 20,
@@ -969,6 +974,7 @@
     hud.strategySpeed.classList.toggle("is-active", activeStrategyId === "hardSpeed");
     hud.strategyClimb.classList.toggle("is-active", activeStrategyId === "maxClimb");
     hud.strategyInfo.textContent = `${strategy.label} · ${strategy.info}`;
+    drawStrategyChart();
   }
 
   function setAutopilotStrategy(strategyId) {
@@ -993,6 +999,7 @@
     if (autopilotEnabled && state) {
       input.noseAngleDeg = getAutopilotAngle();
     }
+    drawStrategyChart();
   }
 
   function applyAutopilotInput() {
@@ -1336,6 +1343,107 @@
     ctx.restore();
   }
 
+  function resizeStrategyChartCanvas() {
+    const rect = hud.strategyChartCanvas.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) {
+      return null;
+    }
+
+    const pixelWidth = Math.round(rect.width * dpr);
+    const pixelHeight = Math.round(rect.height * dpr);
+    if (hud.strategyChartCanvas.width !== pixelWidth || hud.strategyChartCanvas.height !== pixelHeight) {
+      hud.strategyChartCanvas.width = pixelWidth;
+      hud.strategyChartCanvas.height = pixelHeight;
+    }
+    strategyChartCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return rect;
+  }
+
+  function drawStrategyChart() {
+    const strategy = getActiveAutopilotStrategy();
+    const visible = autopilotEnabled && Array.isArray(strategy.angles) && strategy.angles.length > 1;
+    hud.strategyChart.hidden = !visible;
+    if (!visible) {
+      return;
+    }
+
+    const period = strategy.angles.length;
+    const currentTick = state ? state.ticks % period : 0;
+    hud.strategyChartTick.textContent = String(currentTick);
+    hud.strategyChartPeriod.textContent = String(period);
+
+    const rect = resizeStrategyChartCanvas();
+    if (!rect) {
+      return;
+    }
+
+    const w = rect.width;
+    const h = rect.height;
+    const left = 66;
+    const right = 12;
+    const top = 18;
+    const bottom = 50;
+    const plotW = Math.max(1, w - left - right);
+    const plotH = Math.max(1, h - top - bottom);
+    const xFor = (tick) => left + (period <= 1 ? 0 : (tick / (period - 1)) * plotW);
+    const yFor = (angle) => top + ((90 - clamp(angle, -90, 90)) / 180) * plotH;
+
+    strategyChartCtx.clearRect(0, 0, w, h);
+    strategyChartCtx.fillStyle = "rgba(255, 255, 255, 0.52)";
+    strategyChartCtx.fillRect(0, 0, w, h);
+
+    strategyChartCtx.save();
+    strategyChartCtx.font = "31.5px Cascadia Mono, Consolas, monospace";
+    strategyChartCtx.textBaseline = "middle";
+    strategyChartCtx.lineWidth = 1;
+    [-90, -45, 0, 45, 90].forEach((angle) => {
+      const y = yFor(angle);
+      strategyChartCtx.strokeStyle = angle === 0 ? "rgba(16, 33, 42, 0.22)" : "rgba(16, 33, 42, 0.09)";
+      strategyChartCtx.beginPath();
+      strategyChartCtx.moveTo(left, y);
+      strategyChartCtx.lineTo(w - right, y);
+      strategyChartCtx.stroke();
+      strategyChartCtx.fillStyle = "rgba(16, 33, 42, 0.52)";
+      strategyChartCtx.fillText(String(angle), 4, y);
+    });
+
+    strategyChartCtx.strokeStyle = "rgba(0, 126, 134, 0.94)";
+    strategyChartCtx.lineWidth = 2;
+    strategyChartCtx.beginPath();
+    strategy.angles.forEach((angle, tick) => {
+      const x = xFor(tick);
+      const y = yFor(angle);
+      if (tick === 0) {
+        strategyChartCtx.moveTo(x, y);
+      } else {
+        strategyChartCtx.lineTo(x, y);
+      }
+    });
+    strategyChartCtx.stroke();
+
+    const currentAngle = strategy.angles[currentTick];
+    const cursorX = xFor(currentTick);
+    const cursorY = yFor(currentAngle);
+    strategyChartCtx.strokeStyle = "rgba(180, 35, 24, 0.9)";
+    strategyChartCtx.lineWidth = 1.5;
+    strategyChartCtx.beginPath();
+    strategyChartCtx.moveTo(cursorX, top);
+    strategyChartCtx.lineTo(cursorX, h - bottom);
+    strategyChartCtx.stroke();
+
+    strategyChartCtx.fillStyle = "#b42318";
+    strategyChartCtx.beginPath();
+    strategyChartCtx.arc(cursorX, cursorY, 4, 0, Math.PI * 2);
+    strategyChartCtx.fill();
+
+    strategyChartCtx.fillStyle = "rgba(16, 33, 42, 0.7)";
+    strategyChartCtx.font = "31.5px Cascadia Mono, Consolas, monospace";
+    strategyChartCtx.textAlign = "right";
+    strategyChartCtx.textBaseline = "bottom";
+    strategyChartCtx.fillText(`${formatSigned(currentAngle, 1)} deg`, w - right, h - 3);
+    strategyChartCtx.restore();
+  }
+
   function draw() {
     const camera = getCamera();
     drawSky();
@@ -1364,6 +1472,7 @@
     hud.ticks.textContent = String(state.ticks);
     hud.durability.textContent = String(state.durability);
     hud.pitchMarker.style.top = `${50 - (input.noseAngleDeg / 180) * 100}%`;
+    drawStrategyChart();
   }
 
   function frame(now) {

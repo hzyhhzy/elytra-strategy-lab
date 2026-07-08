@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Minecraft 鞘翅二维模拟器</title>
-    <link rel="stylesheet" href="./styles.css?v=20260704-scale75-range2">
+    <link rel="stylesheet" href="./styles.css?v=20260708-large-pitch-text">
   </head>
   <body>
     <main class="app-shell">
@@ -37,6 +37,9 @@
           </div>
         </div>
         <div class="hud hud-right">
+          <a class="repo-link" href="https://github.com/hzyhhzy/elytra-strategy-lab" target="_blank" rel="noreferrer">
+            GitHub: hzyhhzy/elytra-strategy-lab
+          </a>
           <div class="score-row">
             <span>距离</span>
             <strong id="distance">0 m</strong>
@@ -62,6 +65,13 @@
             <button id="strategySpeed" type="button" title="高度不下降时最大水平速度">巡航</button>
           </div>
           <div id="strategyInfo" class="strategy-info" aria-live="polite"></div>
+        </div>
+        <div id="strategyChart" class="strategy-chart" hidden>
+          <div class="strategy-chart-head">
+            <span>仰角规划</span>
+            <strong><span id="strategyChartTick">0</span>/<span id="strategyChartPeriod">0</span> tick</strong>
+          </div>
+          <canvas id="strategyChartCanvas" aria-label="当前策略仰角时序图"></canvas>
         </div>
         <div class="pitch-strip" aria-hidden="true">
           <div id="pitchMarker" class="pitch-marker"></div>
@@ -101,7 +111,7 @@ vy *= 0.9800000190734863</code></pre>
         <div id="statusBanner" class="status-banner" hidden>着陆</div>
       </section>
     </main>
-    <script src="./strategies-data.js?v=20260704-scale75-range2"></script>
-    <script src="./app.js?v=20260704-scale75-range2"></script>
+    <script src="./strategies-data.js?v=20260708-large-pitch-text"></script>
+    <script src="./app.js?v=20260708-large-pitch-text"></script>
   </body>
 </html>

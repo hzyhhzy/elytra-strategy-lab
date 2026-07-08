@@ -43,9 +43,11 @@ Sources and cross-checks:
 - Fabric metadata: `https://meta.fabricmc.net/v2/versions/game` and `https://meta.fabricmc.net/v2/versions/loader/26.2`.
 - Elytra behavior references: Minecraft Wiki and Yarn/LivingEntity-style mapping documentation for older mapped releases.
 
-## General segmented strategy
+## Search Shape
 
-The final hand-usable strategies use a segmented pitch curve:
+Direct per-frame L-BFGS-B can find the strongest climb-rate reference solution currently in this repository, but the unconstrained optimum often uses high-frequency pitch jitter. That kind of result is useful for understanding what the physics allows, but it is hard to interpret and not a good hand-usable strategy. Practical versions need either smoothness regularization or a lower-dimensional, human-readable control family.
+
+For interpretability, the main playable strategies here use an eight-segment pitch curve distilled from those framewise searches:
 
 1. negative-angle hold
 2. linear transition into a negative Bezier curve
@@ -68,10 +70,13 @@ The control points are allowed to be nonmonotone in angle.
 
 | Result | Summary | Data | Plot |
 |---|---:|---|---|
+| Raw per-frame L-BFGS-B max-climb reference | period `255 tick`, climb `1.562324772 blocks/s`, dy `+19.919641`; severe pitch jitter | `results/lbfgsb-max-climb-raw` | ![](docs/images/lbfgsb-max-climb-raw-en.png) |
+| Interpretable segmented fastest climb | period `254 tick`, climb `1.547442 blocks/s`, dy `+19.652515`, horizontal `22.732565 blocks/s` | `results/fastest-climb-rate` | ![](docs/images/fastest-climb-rate-en.png) |
+| Fastest steady-state horizontal speed with nonnegative height | period `357 tick`, horizontal `32.993197 blocks/s`, dy `+0.0000608` | `results/fastest-horizontal-speed` | ![](docs/images/fastest-horizontal-speed-en.png) |
 | From rest, gain at least 2 blocks with minimum drop | minimum initial height `35.1216888246`, target `217 tick`, target x `162.930961` | `results/from-rest-gain-two` | ![](docs/images/from-rest-gain-two-en.png) |
 | From rest, return to original height with minimum drop | minimum initial height `32.3476213893`, return `208 tick`, return x `150.941124` | `results/from-rest-return-height` | ![](docs/images/from-rest-return-height-en.png) |
-| Fastest steady-state climb rate | period `254 tick`, climb `1.547442 blocks/s`, dy `+19.652515`, horizontal `22.732565 blocks/s` | `results/fastest-climb-rate` | ![](docs/images/fastest-climb-rate-en.png) |
-| Fastest steady-state horizontal speed with nonnegative height | period `357 tick`, horizontal `32.993197 blocks/s`, dy `+0.0000608` | `results/fastest-horizontal-speed` | ![](docs/images/fastest-horizontal-speed-en.png) |
+
+The raw L-BFGS-B result directly optimizes every tick's pitch angle after burn-in to periodic steady state: ticks `0..164` are constrained to nose-down or level, and ticks `165..254` are constrained to nose-up or level. Its RMS frame-to-frame pitch change is about `36.16 degrees/tick`, with `90 degrees/tick` maximum jumps. The segmented climb strategy is slightly slower, but it is the interpretable eight-segment version used by the rest of this project. Reproduce the raw search with `solvers/lbfgsb_max_climb.py`.
 
 Each result folder contains:
 
@@ -79,7 +84,7 @@ Each result folder contains:
 - `waveform.csv`: expanded per-tick pitch waveform.
 - `trajectory.csv`: simulated state samples.
 
-For direct reuse, the four strategy parameter files and per-tick waveforms are also mirrored under `strategies/`:
+For direct reuse, the deployable strategy parameter files and per-tick waveforms are also mirrored under `strategies/`:
 
 - `strategies/*/parameters.json`
 - `strategies/*/waveform.csv`
@@ -120,7 +125,9 @@ All three embedded mod strategies loop while Elytra Optima is enabled. The first
 - `solvers/segmented_sampled_optimize.cpp`: segmented Bezier optimizer for periodic horizontal speed and climb-rate searches.
 - `solvers/audit_segmented_local.cpp`: local auditor/refiner for segmented periodic candidates.
 - `solvers/nonperiodic_return_optimize.cpp`: nonperiodic from-rest return/gain-target optimizer.
+- `solvers/lbfgsb_max_climb.py`: direct per-frame L-BFGS-B reproduction script for the raw jittery max-climb reference.
 - `solvers/fourier_optimize.cpp`, `solvers/bspline_optimize.cpp`, `solvers/framewise_optimize.cpp`: exploratory parameterizations used before settling on the segmented curve.
 - `scripts/plot_quadrants.py`: regenerate the Chinese and English quadrant plots from the CSV result files.
+- `scripts/plot_lbfgsb_max_climb_raw.py`: regenerate the Chinese and English quadrant plots for the raw L-BFGS-B max-climb reference.
 
 For the search narrative, see [docs/solver-method.md](docs/solver-method.md).
