@@ -73,6 +73,8 @@ The control points are allowed to be nonmonotone in angle.
 | Raw per-frame L-BFGS-B max-climb reference | period `255 tick`, climb `1.562324772 blocks/s`, dy `+19.919641`; severe pitch jitter | `results/lbfgsb-max-climb-raw` | ![](docs/images/lbfgsb-max-climb-raw-en.png) |
 | Interpretable segmented fastest climb | period `254 tick`, climb `1.547442 blocks/s`, dy `+19.652515`, horizontal `22.732565 blocks/s` | `results/fastest-climb-rate` | ![](docs/images/fastest-climb-rate-en.png) |
 | Fastest steady-state horizontal speed with nonnegative height | period `357 tick`, horizontal `32.993197 blocks/s`, dy `+0.0000608` | `results/fastest-horizontal-speed` | ![](docs/images/fastest-horizontal-speed-en.png) |
+| Periodic no-drop with initial speed | period `170 tick`, initial velocity `(0.317616, 0.021783)`, height span `25.803350`, dy `+0.000138` | `results/periodic-vx025-no-drop` | ![](docs/images/periodic-vx025-no-drop-en.png) |
+| Periodic height +1 with initial speed | period `179 tick`, initial velocity `(0.321915, 0.089330)`, height span `28.522724`, dy `+1.003298` | `results/periodic-gain-one` | ![](docs/images/periodic-gain-one-en.png) |
 | From rest, gain at least 2 blocks with minimum drop | minimum initial height `35.1216888246`, target `217 tick`, target x `162.930961` | `results/from-rest-gain-two` | ![](docs/images/from-rest-gain-two-en.png) |
 | From rest, return to original height with minimum drop | minimum initial height `32.3476213893`, return `208 tick`, return x `150.941124` | `results/from-rest-return-height` | ![](docs/images/from-rest-return-height-en.png) |
 
@@ -92,7 +94,7 @@ For direct reuse, the deployable strategy parameter files and per-tick waveforms
 
 ## Web simulator
 
-The browser simulator source is under `simulator/`. Open `simulator/index.html` directly in a browser to run it locally. It embeds the four mirrored pitch waveforms through `simulator/strategies-data.js`, with CSV loading kept as a fallback for served copies. The scene uses an x/y coordinate grid and the real simulated trail instead of random waypoint rings.
+The browser simulator source is under `simulator/`. Open `simulator/index.html` directly in a browser to run it locally. It embeds selected mirrored pitch waveforms through `simulator/strategies-data.js`, with CSV loading kept as a fallback for served copies. The scene uses an x/y coordinate grid and the real simulated trail instead of random waypoint rings.
 
 ## Fabric mod
 
@@ -109,16 +111,16 @@ Supported version pins:
 
 Controls:
 
-- `H`: toggle Elytra Optima. Every time it is turned on, the default strategy is **min-start-height launch (>35 m)**.
-- `J`: cycle strategy.
+- `H`: toggle Elytra Optima. Every time it is turned on, the configured default strategy is selected; the shipped default is **start +0 (>32 m)**.
+- `J`: cycle strategy. The default strategy and cycle order are configurable through the Mod Menu config button, or directly in `config/elytra-optima.json`.
 
-Cycle order:
+Default cycle order:
 
 ```text
-min-start-height (>35 m) -> fastest climb (20 m/cycle, start >75 m) -> fastest horizontal (33 m/s, start >142 m) -> min-start-height (>35 m)
+start +0 (>32 m) -> start +2 (>35 m) -> initial-speed no-drop (26 m span) -> height +1 (28 m span) -> smooth fastest climb (20 m/cycle, start >75 m) -> jittery fastest climb (20 m/cycle, start >75 m) -> fastest horizontal (33 m/s, start >142 m)
 ```
 
-All three embedded mod strategies loop while Elytra Optima is enabled. The first one is the `217 tick` prefix of the from-rest gain +2 result, used as a repeating pitch cycle.
+All embedded mod strategies are stored as per-frame CSV resources and loop while Elytra Optima is enabled.
 
 ## Reproducing and extending
 

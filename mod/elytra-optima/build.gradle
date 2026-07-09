@@ -20,6 +20,13 @@ def minecraftClientJar = file("${System.getProperty('user.home')}/.gradle/caches
 def fabricCompileLibs = file("${toolsDir}/fabric-compile-libs")
 def minecraftLibraries = file("${toolsDir}/minecraft-libraries")
 
+sourceSets {
+    modmenuApiStub {
+        java.srcDir 'src/modmenuApiStub/java'
+        compileClasspath += files(minecraftClientJar)
+    }
+}
+
 configurations {
     minecraftCompileOnly
 }
@@ -28,6 +35,7 @@ dependencies {
     compileOnly files(minecraftClientJar)
     compileOnly fileTree(dir: fabricCompileLibs, include: '*.jar')
     compileOnly fileTree(dir: minecraftLibraries, include: '**/*.jar')
+    compileOnly sourceSets.modmenuApiStub.output
 }
 
 tasks.register('verifyCompileInputs') {
@@ -42,6 +50,12 @@ tasks.register('verifyCompileInputs') {
 }
 
 compileJava {
+    dependsOn tasks.named('verifyCompileInputs'), tasks.named('compileModmenuApiStubJava')
+    options.encoding = 'UTF-8'
+    options.release = (project.java_version as String).toInteger()
+}
+
+tasks.named('compileModmenuApiStubJava') {
     dependsOn tasks.named('verifyCompileInputs')
     options.encoding = 'UTF-8'
     options.release = (project.java_version as String).toInteger()

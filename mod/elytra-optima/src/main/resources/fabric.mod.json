@@ -3,7 +3,7 @@
   "id": "elytra_optima",
   "version": "${version}",
   "name": "Elytra Optima",
-  "description": "Keys: H toggles Elytra Optima, J cycles strategies.\nGitHub: https://github.com/hzyhhzy/elytra-strategy-lab\nPitch-only Elytra strategy mod using optimized flight profiles: minimum-start-height launch (>35 m), fastest climb (~20 m/cycle), and fastest horizontal flight (~33 m/s).",
+  "description": "Keys: H toggles Elytra Optima, J cycles strategies.\nGitHub: https://github.com/hzyhhzy/elytra-strategy-lab\nPitch-only Elytra strategy mod using optimized flight profiles, including start +0, start +2, initial-speed no-drop, height +1, smooth climb, jittery climb, and fastest horizontal strategies.",
   "icon": "assets/elytra_optima/icon.png",
   "authors": [
     "hzyhhzy",
@@ -19,6 +19,9 @@
   "entrypoints": {
     "client": [
       "local.elytra.optima.ElytraOptimaClient"
+    ],
+    "modmenu": [
+      "local.elytra.optima.ElytraOptimaModMenu"
     ]
   },
   "depends": {

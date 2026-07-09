@@ -73,6 +73,8 @@ x_i = 0.5 - 0.5 * cos(pi * i / (controlCount - 1))
 | 逐帧 L-BFGS-B 最大升速原始参考解 | 周期 `255 tick`，升速 `1.562324772 方块/秒`，dy `+19.919641`；有剧烈抖动 | `results/lbfgsb-max-climb-raw` | ![](docs/images/lbfgsb-max-climb-raw.png) |
 | 可解释分段最快升速 | 周期 `254 tick`，升速 `1.547442 方块/秒`，dy `+19.652515`，水平速度 `22.732565 方块/秒` | `results/fastest-climb-rate` | ![](docs/images/fastest-climb-rate.png) |
 | 平衡周期下高度不下降时最快水平速度 | 周期 `357 tick`，水平速度 `32.993197 方块/秒`，dy `+0.0000608` | `results/fastest-horizontal-speed` | ![](docs/images/fastest-horizontal-speed.png) |
+| 有初速度，高度不下降 | 周期 `170 tick`，初始速度 `(0.317616, 0.021783)`，高度跨度 `25.803350`，dy `+0.000138` | `results/periodic-vx025-no-drop` | ![](docs/images/periodic-vx025-no-drop.png) |
+| 有初速度，周期高度 +1 | 周期 `179 tick`，初始速度 `(0.321915, 0.089330)`，高度跨度 `28.522724`，dy `+1.003298` | `results/periodic-gain-one` | ![](docs/images/periodic-gain-one.png) |
 | 初始 0 速度，至少提升 2 格，最低下降高度 | 最低初始高度 `35.1216888246`，达到 `217 tick`，x `162.930961` | `results/from-rest-gain-two` | ![](docs/images/from-rest-gain-two.png) |
 | 初始 0 速度，高度至少不变，最低下降高度 | 最低初始高度 `32.3476213893`，返回 `208 tick`，x `150.941124` | `results/from-rest-return-height` | ![](docs/images/from-rest-return-height.png) |
 
@@ -92,7 +94,7 @@ x_i = 0.5 - 0.5 * cos(pi * i / (controlCount - 1))
 
 ## 网页模拟器
 
-浏览器模拟器源码放在 `simulator/`。直接用浏览器打开 `simulator/index.html` 就能本地运行。四个 pitch 时序通过 `simulator/strategies-data.js` 内置，CSV 加载保留为服务器运行时的 fallback。场景里使用 x/y 坐标网格和真实模拟轨迹，不再生成随机路点圆环。
+浏览器模拟器源码放在 `simulator/`。直接用浏览器打开 `simulator/index.html` 就能本地运行。部分镜像 pitch 时序通过 `simulator/strategies-data.js` 内置，CSV 加载保留为服务器运行时的 fallback。场景里使用 x/y 坐标网格和真实模拟轨迹，不再生成随机路点圆环。
 
 ## Fabric mod
 
@@ -109,16 +111,16 @@ mod metadata 中显示的作者是 `hzyhhzy`。图标引用路径是 `assets/ely
 
 按键：
 
-- `H`：开关 Elytra Optima。每次刚开启时默认策略都是“最小高度起步（>35m）”。
-- `J`：切换策略。
+- `H`：开关 Elytra Optima。每次刚开启时会选择配置里的默认策略；出厂默认是“起步+0（>32m）”。
+- `J`：切换策略。默认策略和切换顺序可以通过 Mod Menu 设置按钮配置，也可以直接改 `config/elytra-optima.json`。
 
-切换顺序：
+默认切换顺序：
 
 ```text
-最小高度起步（>35m） -> 最大提升速度（20m/cycle，起步高度>75m） -> 最快水平速度（33m/s，起步高度>142m） -> 最小高度起步（>35m）
+起步+0（>32m） -> 起步+2（>35m） -> 有初速不掉高（落差26m） -> 高度+1（落差28m） -> 平滑最大提升速度（20m/cycle，起步高度>75m） -> 抖动最大提升速度（20m/cycle，起步高度>75m） -> 最快水平速度（33m/s，起步高度>142m）
 ```
 
-mod 内置的三个策略都会在 Elytra Optima 开启时循环。第一个策略使用“初始 0 速度，至少提升 2 格”结果的前 `217 tick`，作为重复的俯仰角周期。
+mod 内置策略都以逐帧 CSV 资源保存，并且会在 Elytra Optima 开启时循环。
 
 ## 复现和继续搜索
 

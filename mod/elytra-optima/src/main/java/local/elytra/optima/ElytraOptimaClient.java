@@ -1,115 +1,122 @@
 package local.elytra.optima;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public final class ElytraOptimaClient implements ClientModInitializer {
-    private static final Strategy[] STRATEGIES = new Strategy[] {
-        Strategy.segmentedPrefix(
-            "gain2_min_drop",
-            "最小高度起步（>35m）",
-            "Min-start height (>35 m)",
-            217,
-            new Segments(0, 0, 128, 14, 5, 0, 271, 40),
-            -88.61935982554968,
-            new double[] {
-                -0.01,
-                -0.01,
-                -0.01,
-                -23.154733257869417,
-                -15.716026296569407,
-                -63.858448303099955,
-                -9.930551572139025,
-                -49.10599335266985
-            },
-            new double[] {
-                60.00195285516284,
-                22.23981811310981,
-                8.794913186308051,
-                5.559029164842681,
-                0.0651262291329768,
-                17.541921762239856,
-                60.36573726338823,
-                0.0
-            },
-            0.0
-        ),
-        Strategy.segmented(
-            "max_climb",
-            "最大提升速度（20m/cycle，起步高度>75m）",
-            "Fastest climb (20 m/cycle, start >75 m)",
-            254,
-            new Segments(2, 5, 141, 15, 4, 0, 83, 4),
-            -83.44910138799413,
-            new double[] {
-                -21.507408848406726,
-                -31.064412051040822,
-                -17.75203519264177,
-                -63.83111872689089,
-                -5.024003861649917,
-                -83.57492395202101,
-                -19.020736082912922,
-                -62.2599218701962
-            },
-            new double[] {
-                80.88135214090949,
-                59.766059051049844,
-                26.760085044938684,
-                33.961915704001306,
-                7.911228156821989,
-                22.564579953207456,
-                10.025017993419707,
-                0.0
-            }
-        ),
-        Strategy.segmented(
-            "hard_speed",
-            "最快水平速度（33m/s，起步高度>142m）",
-            "Fastest horizontal (33 m/s, start >142 m)",
-            357,
-            new Segments(10, 2, 246, 13, 3, 5, 70, 8),
-            -89.5,
-            new double[] {
-                -32.84953798913042,
-                -40.13245184698956,
-                -22.468576627022838,
-                -44.7325714278412,
-                -49.26187641318844,
-                -22.776456702908604,
-                -66.27087681959183,
-                -38.24817494492914
-            },
-            new double[] {
-                78.32703324587365,
-                45.31013945331428,
-                42.84497193184144,
-                16.96999777207822,
-                32.377854556287126,
-                1.4634826880848515,
-                14.955641228893784,
-                0.0
-            }
-        )
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final String CONFIG_FILE_NAME = "elytra-optima.json";
+    private static final String DEFAULT_STRATEGY_ID = "start_plus_0";
+    private static final String[] DEFAULT_CYCLE_ORDER = new String[] {
+        "start_plus_0",
+        "start_plus_2",
+        "vx025_no_drop",
+        "periodic_gain1",
+        "smooth_max_climb",
+        "jagged_max_climb_255",
+        "hard_speed"
     };
+
+    private static final Strategy START_PLUS_0 = Strategy.sampledResource(
+        "start_plus_0",
+        "起步+0（>32m）",
+        "Start +0 (>32 m)",
+        "start_plus_0.csv",
+        208
+    );
+    private static final Strategy START_PLUS_2 = Strategy.sampledResource(
+        "start_plus_2",
+        "起步+2（>35m）",
+        "Start +2 (>35 m)",
+        "start_plus_2.csv",
+        217
+    );
+    private static final Strategy VX025_NO_DROP = Strategy.sampledResource(
+        "vx025_no_drop",
+        "有初速不掉高（落差26m）",
+        "Initial-speed no-drop (26 m span)",
+        "vx025_no_drop.csv",
+        170
+    );
+    private static final Strategy PERIODIC_GAIN1 = Strategy.sampledResource(
+        "periodic_gain1",
+        "高度+1（落差28m）",
+        "Height +1 (28 m span)",
+        "periodic_gain1.csv",
+        179
+    );
+    private static final Strategy SMOOTH_MAX_CLIMB = Strategy.sampledResource(
+        "smooth_max_climb",
+        "平滑最大提升速度（20m/cycle，起步高度>75m）",
+        "Smooth fastest climb (20 m/cycle, start >75 m)",
+        "smooth_max_climb.csv",
+        254
+    );
+    private static final Strategy JAGGED_MAX_CLIMB_255 = Strategy.sampledResource(
+        "jagged_max_climb_255",
+        "抖动最大提升速度（20m/cycle，起步高度>75m）",
+        "Jittery fastest climb (20 m/cycle, start >75 m)",
+        "jagged_max_climb_255.csv",
+        255
+    );
+    private static final Strategy HARD_SPEED = Strategy.sampledResource(
+        "hard_speed",
+        "最快水平速度（33m/s，起步高度>142m）",
+        "Fastest horizontal (33 m/s, start >142 m)",
+        "hard_speed.csv",
+        357
+    );
+
+    private static final Strategy[] ALL_STRATEGIES = new Strategy[] {
+        START_PLUS_0,
+        START_PLUS_2,
+        VX025_NO_DROP,
+        PERIODIC_GAIN1,
+        SMOOTH_MAX_CLIMB,
+        JAGGED_MAX_CLIMB_255,
+        HARD_SPEED
+    };
+    private static final Map<String, Strategy> STRATEGIES_BY_ID = buildStrategyMap();
 
     private static KeyMapping toggleKey;
     private static KeyMapping cycleStrategyKey;
     private static boolean enabled = false;
     private static int strategyIndex = 0;
     private static int tickInCycle = 0;
+    private static String defaultStrategyId = DEFAULT_STRATEGY_ID;
+    private static List<Strategy> cycleStrategies = new ArrayList<>(Arrays.asList(ALL_STRATEGIES));
 
     @Override
     public void onInitializeClient() {
+        applyConfig(loadConfig());
+
         toggleKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
             "key.elytra_optima.toggle",
             InputConstants.Type.KEYSYM,
@@ -131,7 +138,7 @@ public final class ElytraOptimaClient implements ClientModInitializer {
             enabled = !enabled;
             tickInCycle = 0;
             if (enabled) {
-                strategyIndex = 0;
+                strategyIndex = indexOfStrategy(defaultStrategyId);
             }
             boolean chinese = isChinese(client);
             showStatus(
@@ -143,7 +150,7 @@ public final class ElytraOptimaClient implements ClientModInitializer {
         }
 
         while (cycleStrategyKey.consumeClick()) {
-            strategyIndex = (strategyIndex + 1) % STRATEGIES.length;
+            strategyIndex = (strategyIndex + 1) % cycleStrategies.size();
             tickInCycle = 0;
             boolean chinese = isChinese(client);
             showStatus(client, text(chinese, "策略: ", "Strategy: ") + currentStrategy().label(chinese));
@@ -170,7 +177,20 @@ public final class ElytraOptimaClient implements ClientModInitializer {
     }
 
     private static Strategy currentStrategy() {
-        return STRATEGIES[strategyIndex];
+        if (cycleStrategies.isEmpty()) {
+            return START_PLUS_0;
+        }
+        strategyIndex = Math.floorMod(strategyIndex, cycleStrategies.size());
+        return cycleStrategies.get(strategyIndex);
+    }
+
+    private static int indexOfStrategy(String strategyId) {
+        for (int i = 0; i < cycleStrategies.size(); i++) {
+            if (cycleStrategies.get(i).id().equals(strategyId)) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     private static void showStatus(Minecraft client, String message) {
@@ -192,91 +212,231 @@ public final class ElytraOptimaClient implements ClientModInitializer {
         return Math.max(min, Math.min(max, value));
     }
 
-    private record Segments(
-        int negativeConstantTicks,
-        int negativeTransitionLinearTicks,
-        int negativeBezierTicks,
-        int holdZeroAfterNegativeTicks,
-        int positiveRampLinearTicks,
-        int positiveHoldTicks,
-        int positiveBezierToZeroTicks,
-        int holdZeroEndTicks
-    ) {
-        int totalTicks() {
-            return negativeConstantTicks
-                + negativeTransitionLinearTicks
-                + negativeBezierTicks
-                + holdZeroAfterNegativeTicks
-                + positiveRampLinearTicks
-                + positiveHoldTicks
-                + positiveBezierToZeroTicks
-                + holdZeroEndTicks;
+    static List<StrategyInfo> strategyInfos(boolean chinese) {
+        List<StrategyInfo> out = new ArrayList<>(ALL_STRATEGIES.length);
+        for (Strategy strategy : ALL_STRATEGIES) {
+            out.add(new StrategyInfo(strategy.id(), strategy.label(chinese)));
+        }
+        return out;
+    }
+
+    static List<String> configuredCycleOrderIds() {
+        List<String> out = new ArrayList<>(cycleStrategies.size());
+        for (Strategy strategy : cycleStrategies) {
+            out.add(strategy.id());
+        }
+        return out;
+    }
+
+    static String configuredDefaultStrategyId() {
+        return defaultStrategyId;
+    }
+
+    static boolean configureStrategies(String defaultId, List<String> cycleOrder) {
+        ModConfig input = new ModConfig();
+        input.defaultStrategy = defaultId;
+        input.cycleOrder = new ArrayList<>(cycleOrder);
+        ModConfig normalized = normalizeConfig(input);
+        try {
+            saveConfig(configPath(), normalized);
+            applyConfig(normalized);
+            return true;
+        } catch (IOException exception) {
+            return false;
         }
     }
 
-    private record Strategy(String id, String zhLabel, String enLabel, int periodTicks, double[] angles, boolean repeating, double holdAfterAngle) {
-        static Strategy segmented(
-            String id,
-            String zhLabel,
-            String enLabel,
-            int periodTicks,
-            Segments segments,
-            double negativeConstantAngle,
-            double[] negativeControls,
-            double[] positiveControls
-        ) {
-            if (segments.totalTicks() != periodTicks) {
-                throw new IllegalArgumentException(id + " segment ticks do not sum to " + periodTicks);
-            }
+    static boolean resetConfigToDefaults() {
+        ModConfig defaults = ModConfig.defaults();
+        try {
+            saveConfig(configPath(), defaults);
+            applyConfig(defaults);
+            return true;
+        } catch (IOException exception) {
+            return false;
+        }
+    }
 
-            List<Double> out = new ArrayList<>(periodTicks);
-            appendHold(out, segments.negativeConstantTicks(), negativeConstantAngle);
-            appendLinear(out, segments.negativeTransitionLinearTicks(), negativeConstantAngle, negativeControls[0]);
-            appendParametricBezier(out, segments.negativeBezierTicks(), negativeControls);
-            appendHold(out, segments.holdZeroAfterNegativeTicks(), 0.0);
-            appendLinear(out, segments.positiveRampLinearTicks(), 0.0, positiveControls[0]);
-            appendHold(out, segments.positiveHoldTicks(), positiveControls[0]);
-            appendParametricBezier(out, segments.positiveBezierToZeroTicks(), positiveControls);
-            appendHold(out, segments.holdZeroEndTicks(), 0.0);
-
-            double[] angles = new double[out.size()];
-            for (int i = 0; i < out.size(); i++) {
-                angles[i] = out.get(i);
+    private static Map<String, Strategy> buildStrategyMap() {
+        Map<String, Strategy> out = new LinkedHashMap<>();
+        for (Strategy strategy : ALL_STRATEGIES) {
+            if (out.put(strategy.id(), strategy) != null) {
+                throw new IllegalStateException("Duplicate Elytra Optima strategy id: " + strategy.id());
             }
-            return new Strategy(id, zhLabel, enLabel, periodTicks, angles, true, 0.0);
+        }
+        return Collections.unmodifiableMap(out);
+    }
+
+    private static ModConfig loadConfig() {
+        ModConfig defaults = ModConfig.defaults();
+        Path path = configPath();
+        try {
+            Files.createDirectories(path.getParent());
+            if (!Files.exists(path)) {
+                saveConfig(path, defaults);
+                return defaults;
+            }
+            try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+                ModConfig loaded = GSON.fromJson(reader, ModConfig.class);
+                ModConfig normalized = normalizeConfig(loaded);
+                saveConfig(path, normalized);
+                return normalized;
+            }
+        } catch (IOException | JsonSyntaxException exception) {
+            return defaults;
+        }
+    }
+
+    private static Path configPath() {
+        return FabricLoader.getInstance().getConfigDir().resolve(CONFIG_FILE_NAME);
+    }
+
+    private static void applyConfig(ModConfig config) {
+        defaultStrategyId = config.defaultStrategy;
+        cycleStrategies = new ArrayList<>();
+        for (String id : config.cycleOrder) {
+            Strategy strategy = STRATEGIES_BY_ID.get(id);
+            if (strategy != null) {
+                cycleStrategies.add(strategy);
+            }
+        }
+        if (cycleStrategies.isEmpty()) {
+            cycleStrategies.add(START_PLUS_0);
+            defaultStrategyId = START_PLUS_0.id();
+        }
+        strategyIndex = indexOfStrategy(defaultStrategyId);
+    }
+
+    private static ModConfig normalizeConfig(ModConfig input) {
+        if (input == null) {
+            return ModConfig.defaults();
         }
 
-        static Strategy segmentedPrefix(
+        String defaultId = STRATEGIES_BY_ID.containsKey(input.defaultStrategy)
+            ? input.defaultStrategy
+            : DEFAULT_STRATEGY_ID;
+        List<String> order = normalizeCycleOrder(input.cycleOrder);
+        if (!order.contains(defaultId)) {
+            order.add(0, defaultId);
+        }
+
+        ModConfig output = new ModConfig();
+        output.defaultStrategy = defaultId;
+        output.cycleOrder = order;
+        return output;
+    }
+
+    private static List<String> normalizeCycleOrder(List<String> input) {
+        List<String> output = new ArrayList<>();
+        if (input != null) {
+            for (String id : input) {
+                if (STRATEGIES_BY_ID.containsKey(id) && !output.contains(id)) {
+                    output.add(id);
+                }
+            }
+        }
+        if (output.isEmpty()) {
+            output.addAll(Arrays.asList(DEFAULT_CYCLE_ORDER));
+        }
+        return output;
+    }
+
+    private static void saveConfig(Path path, ModConfig config) throws IOException {
+        Files.createDirectories(path.getParent());
+        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+            GSON.toJson(config, writer);
+        }
+    }
+
+    private static double[] loadAngleCsv(String resourceName, int expectedTicks) {
+        String resourcePath = "/assets/elytra_optima/strategies/" + resourceName;
+        try (
+            InputStream stream = ElytraOptimaClient.class.getResourceAsStream(resourcePath);
+            BufferedReader reader = stream == null
+                ? null
+                : new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))
+        ) {
+            if (reader == null) {
+                throw new IllegalStateException("Missing Elytra Optima strategy resource: " + resourcePath);
+            }
+
+            String header = reader.readLine();
+            int angleColumn = findAngleColumn(header, resourcePath);
+            List<Double> angles = new ArrayList<>();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.isBlank()) {
+                    continue;
+                }
+                String[] parts = splitCsvLine(line);
+                if (angleColumn >= parts.length) {
+                    throw new IllegalStateException("Malformed Elytra Optima strategy row in " + resourcePath + ": " + line);
+                }
+                angles.add(Double.parseDouble(parts[angleColumn]));
+            }
+
+            if (angles.size() != expectedTicks) {
+                throw new IllegalStateException(
+                    resourcePath + " has " + angles.size() + " ticks, expected " + expectedTicks
+                );
+            }
+
+            double[] out = new double[angles.size()];
+            for (int i = 0; i < out.length; i++) {
+                out[i] = angles.get(i);
+            }
+            return out;
+        } catch (IOException exception) {
+            throw new IllegalStateException("Failed to load Elytra Optima strategy resource: " + resourcePath, exception);
+        }
+    }
+
+    private static int findAngleColumn(String header, String resourcePath) {
+        if (header == null) {
+            throw new IllegalStateException("Empty Elytra Optima strategy resource: " + resourcePath);
+        }
+        String[] columns = splitCsvLine(header);
+        for (int i = 0; i < columns.length; i++) {
+            String column = columns[i];
+            if ("angle".equals(column) || "angleDeg_pass_to_stepElytra2D".equals(column)) {
+                return i;
+            }
+        }
+        throw new IllegalStateException("No angle column in Elytra Optima strategy resource: " + resourcePath);
+    }
+
+    private static String[] splitCsvLine(String line) {
+        String[] parts = line.split(",", -1);
+        for (int i = 0; i < parts.length; i++) {
+            parts[i] = parts[i].trim().replace("\"", "");
+        }
+        return parts;
+    }
+
+    private static final class ModConfig {
+        String defaultStrategy = DEFAULT_STRATEGY_ID;
+        List<String> cycleOrder = new ArrayList<>(Arrays.asList(DEFAULT_CYCLE_ORDER));
+
+        static ModConfig defaults() {
+            ModConfig config = new ModConfig();
+            config.defaultStrategy = DEFAULT_STRATEGY_ID;
+            config.cycleOrder = new ArrayList<>(Arrays.asList(DEFAULT_CYCLE_ORDER));
+            return config;
+        }
+    }
+
+    record StrategyInfo(String id, String label) {
+    }
+
+    private record Strategy(String id, String zhLabel, String enLabel, double[] angles) {
+        static Strategy sampledResource(
             String id,
             String zhLabel,
             String enLabel,
-            int activeTicks,
-            Segments segments,
-            double negativeConstantAngle,
-            double[] negativeControls,
-            double[] positiveControls,
-            double holdAfterAngle
+            String resourceName,
+            int expectedTicks
         ) {
-            int expandedTicks = segments.totalTicks();
-            if (activeTicks <= 0 || activeTicks > expandedTicks) {
-                throw new IllegalArgumentException(id + " active tick count must be in 1.." + expandedTicks);
-            }
-
-            List<Double> out = new ArrayList<>(expandedTicks);
-            appendHold(out, segments.negativeConstantTicks(), negativeConstantAngle);
-            appendLinear(out, segments.negativeTransitionLinearTicks(), negativeConstantAngle, negativeControls[0]);
-            appendParametricBezier(out, segments.negativeBezierTicks(), negativeControls);
-            appendHold(out, segments.holdZeroAfterNegativeTicks(), 0.0);
-            appendLinear(out, segments.positiveRampLinearTicks(), 0.0, positiveControls[0]);
-            appendHold(out, segments.positiveHoldTicks(), positiveControls[0]);
-            appendParametricBezier(out, segments.positiveBezierToZeroTicks(), positiveControls);
-            appendHold(out, segments.holdZeroEndTicks(), 0.0);
-
-            double[] angles = new double[activeTicks];
-            for (int i = 0; i < activeTicks; i++) {
-                angles[i] = out.get(i);
-            }
-            return new Strategy(id, zhLabel, enLabel, activeTicks, angles, true, holdAfterAngle);
+            return new Strategy(id, zhLabel, enLabel, loadAngleCsv(resourceName, expectedTicks));
         }
 
         String label(boolean chinese) {
@@ -284,79 +444,11 @@ public final class ElytraOptimaClient implements ClientModInitializer {
         }
 
         double angleAt(int tick) {
-            if (!repeating && tick >= angles.length) {
-                return holdAfterAngle;
-            }
             return angles[Math.floorMod(tick, angles.length)];
         }
 
         int nextTick(int tick) {
-            if (repeating) {
-                return (tick + 1) % periodTicks;
-            }
-            return tick >= angles.length ? tick : tick + 1;
-        }
-
-        private static void appendHold(List<Double> out, int ticks, double angle) {
-            for (int i = 0; i < ticks; i++) {
-                out.add(angle);
-            }
-        }
-
-        private static void appendLinear(List<Double> out, int ticks, double fromAngle, double toAngle) {
-            for (int i = 0; i < ticks; i++) {
-                double u = (i + 1.0) / ticks;
-                out.add(fromAngle * (1.0 - u) + toAngle * u);
-            }
-        }
-
-        private static void appendParametricBezier(List<Double> out, int ticks, double[] yControls) {
-            if (ticks <= 0) {
-                return;
-            }
-            if (ticks == 1) {
-                out.add(yControls[0]);
-                return;
-            }
-
-            double[] xControls = makeCosineBezierX(yControls.length);
-            for (int i = 0; i < ticks; i++) {
-                double targetX = i / (ticks - 1.0);
-                double u = solveBezierUForX(xControls, targetX);
-                out.add(bezierValue(yControls, u));
-            }
-        }
-
-        private static double[] makeCosineBezierX(int count) {
-            double[] controls = new double[count];
-            for (int i = 0; i < count; i++) {
-                controls[i] = 0.5 - 0.5 * Math.cos(Math.PI * i / (count - 1.0));
-            }
-            return controls;
-        }
-
-        private static double solveBezierUForX(double[] xControls, double targetX) {
-            double lo = 0.0;
-            double hi = 1.0;
-            for (int i = 0; i < 60; i++) {
-                double mid = (lo + hi) * 0.5;
-                if (bezierValue(xControls, mid) < targetX) {
-                    lo = mid;
-                } else {
-                    hi = mid;
-                }
-            }
-            return (lo + hi) * 0.5;
-        }
-
-        private static double bezierValue(double[] points, double u) {
-            double[] work = points.clone();
-            for (int level = work.length - 1; level > 0; level--) {
-                for (int i = 0; i < level; i++) {
-                    work[i] = work[i] * (1.0 - u) + work[i + 1] * u;
-                }
-            }
-            return work[0];
+            return (tick + 1) % angles.length;
         }
     }
 }

@@ -168,6 +168,22 @@ def main():
             "Fastest Horizontal Strategy",
             "period 357 tick, average horizontal speed 32.993 blocks/s",
         ),
+        (
+            "periodic-vx025-no-drop",
+            "periodic-vx025-no-drop",
+            "有初速度，高度不下降",
+            "周期 170 tick，落差 25.803 方块，dy +0.000138",
+            "Initial-Speed No-Drop Strategy",
+            "period 170 tick, height span 25.803 blocks, dy +0.000138",
+        ),
+        (
+            "periodic-gain-one",
+            "periodic-gain-one",
+            "周期高度 +1 策略",
+            "周期 179 tick，落差 28.523 方块，dy +1.003",
+            "Periodic Height +1 Strategy",
+            "period 179 tick, height span 28.523 blocks, dy +1.003",
+        ),
     ]
     for result_dir, base_name, title_zh, summary_zh, title_en, summary_en in plots:
         draw(result_dir, f"{base_name}.png", title_zh, summary_zh, LABELS_ZH)
