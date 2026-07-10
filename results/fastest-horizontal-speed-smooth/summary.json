@@ -1,0 +1,19 @@
+{
+  "name": "fastest_horizontal_no_chatter_java_exact",
+  "periodTicks": 357,
+  "phaseOrigin": "highest steady-state point",
+  "phaseRotationTicks": 5,
+  "avgHorizontalBlocksPerSecond": 33.01100767047044,
+  "climbRateBlocksPerSecond": 3.526872038830385e-05,
+  "dxBlocksPerCycle": 589.2464869178974,
+  "dyBlocksPerCycle": 0.0006295466589312237,
+  "heightSpanBlocks": 134.39402460662322,
+  "minRelativeYBlocks": -134.3933950599643,
+  "maxRelativeYBlocks": 0.0006295466589312237,
+  "meanAbsDeltaDegreesPerTick": 1.0177310103641923,
+  "rmsDeltaDegreesPerTick": 5.948968159741932,
+  "maxAbsDeltaDegreesPerTick": 87.86303361469881,
+  "minAngleDegrees": -87.96784876114272,
+  "maxAngleDegrees": 79.71894259094682,
+  "converged": true
+}

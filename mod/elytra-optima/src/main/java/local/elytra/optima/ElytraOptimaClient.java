@@ -41,6 +41,7 @@ public final class ElytraOptimaClient implements ClientModInitializer {
         "periodic_gain1",
         "smooth_max_climb",
         "jagged_max_climb_255",
+        "smooth_horizontal",
         "hard_speed"
     };
 
@@ -60,10 +61,10 @@ public final class ElytraOptimaClient implements ClientModInitializer {
     );
     private static final Strategy VX025_NO_DROP = Strategy.sampledResource(
         "vx025_no_drop",
-        "有初速不掉高（落差26m）",
-        "Initial-speed no-drop (26 m span)",
+        "有初速最低起步（25.56m）",
+        "Minimum start with initial speed (25.56 m)",
         "vx025_no_drop.csv",
-        170
+        162
     );
     private static final Strategy PERIODIC_GAIN1 = Strategy.sampledResource(
         "periodic_gain1",
@@ -74,22 +75,29 @@ public final class ElytraOptimaClient implements ClientModInitializer {
     );
     private static final Strategy SMOOTH_MAX_CLIMB = Strategy.sampledResource(
         "smooth_max_climb",
-        "平滑最大提升速度（20m/cycle，起步高度>75m）",
-        "Smooth fastest climb (20 m/cycle, start >75 m)",
+        "无抖最大升速（1.553m/s，起步>74m）",
+        "No-chatter max climb (1.553 m/s, start >74 m)",
         "smooth_max_climb.csv",
         254
     );
     private static final Strategy JAGGED_MAX_CLIMB_255 = Strategy.sampledResource(
         "jagged_max_climb_255",
-        "抖动最大提升速度（20m/cycle，起步高度>75m）",
-        "Jittery fastest climb (20 m/cycle, start >75 m)",
+        "最大升速最优解（不禁止逐帧抖动，1.562m/s，起步>75m）",
+        "Max-climb optimum (per-frame jitter allowed, 1.562 m/s, start >75 m)",
         "jagged_max_climb_255.csv",
         255
     );
+    private static final Strategy SMOOTH_HORIZONTAL = Strategy.sampledResource(
+        "smooth_horizontal",
+        "无抖最快水平（33.011m/s，起步>135m）",
+        "No-chatter horizontal (33.011 m/s, start >135 m)",
+        "smooth_horizontal.csv",
+        357
+    );
     private static final Strategy HARD_SPEED = Strategy.sampledResource(
         "hard_speed",
-        "最快水平速度（33m/s，起步高度>142m）",
-        "Fastest horizontal (33 m/s, start >142 m)",
+        "最快水平最优解（不禁止逐帧抖动，33.022m/s，起步>135m）",
+        "Horizontal optimum (per-frame jitter allowed, 33.022 m/s, start >135 m)",
         "hard_speed.csv",
         357
     );
@@ -101,6 +109,7 @@ public final class ElytraOptimaClient implements ClientModInitializer {
         PERIODIC_GAIN1,
         SMOOTH_MAX_CLIMB,
         JAGGED_MAX_CLIMB_255,
+        SMOOTH_HORIZONTAL,
         HARD_SPEED
     };
     private static final Map<String, Strategy> STRATEGIES_BY_ID = buildStrategyMap();

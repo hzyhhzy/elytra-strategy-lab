@@ -1,0 +1,17 @@
+field,value
+format,elytra-framewise-periodic-v2
+variant,optimum (per-frame jitter allowed)
+optimizationTarget,max_climb_rate
+period,255
+optimizerSplitBeforePhaseRotation,165
+phaseRotationTicks,0
+avgHorizontal,22.739829219457985
+climbRate,1.5615507614040245
+dx,289.9328225480893
+dy,19.909772207901312
+heightSpan,94.15807479378545
+meanAbsDelta,16.327083618380886
+rmsDelta,36.08607582809767
+maxAbsDelta,89.99
+noShortPeriodChatter,0
+method,Per-frame optimization followed by Java-exact coordinate and endpoint refinement

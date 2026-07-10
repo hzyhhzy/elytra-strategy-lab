@@ -1,0 +1,19 @@
+{
+  "name": "minimum_start_height_with_initial_speed",
+  "periodTicks": 162,
+  "phaseOrigin": "highest steady-state point",
+  "phaseRotationTicks": 0,
+  "avgHorizontalBlocksPerSecond": 16.259459514555545,
+  "climbRateBlocksPerSecond": 5.325507843354258e-09,
+  "dxBlocksPerCycle": 131.7016220678999,
+  "dyBlocksPerCycle": 4.313661353116949e-08,
+  "heightSpanBlocks": 25.560603171783995,
+  "minRelativeYBlocks": -25.560603128647383,
+  "maxRelativeYBlocks": 4.313661353116949e-08,
+  "meanAbsDeltaDegreesPerTick": 2.0902936264041267,
+  "rmsDeltaDegreesPerTick": 8.244479676456471,
+  "maxAbsDeltaDegreesPerTick": 89.53746806015683,
+  "minAngleDegrees": -89.53749999979999,
+  "maxAngleDegrees": 55.658584860269364,
+  "converged": true
+}

@@ -45,40 +45,26 @@ Sources and cross-checks:
 
 ## Search Shape
 
-Direct per-frame L-BFGS-B can find the strongest climb-rate reference solution currently in this repository, but the unconstrained optimum often uses high-frequency pitch jitter. That kind of result is useful for understanding what the physics allows, but it is hard to interpret and not a good hand-usable strategy. Practical versions need either smoothness regularization or a lower-dimensional, human-readable control family.
+Direct per-frame optimization finds the strongest reference solutions, but the optimum can use high-frequency pitch alternation as a legitimate discrete-time control. The repository therefore keeps two versions for the climb-rate and horizontal-speed objectives:
 
-For interpretability, the main playable strategies here use an eight-segment pitch curve distilled from those framewise searches:
+- an **optimum where per-frame jitter is allowed**, with no smoothness penalty;
+- a **no-chatter practical version**, where real phase jumps remain instantaneous but rapid back-and-forth pitch reversals are removed.
 
-1. negative-angle hold
-2. linear transition into a negative Bezier curve
-3. negative Bezier curve
-4. zero-angle hold
-5. linear ramp to a positive angle
-6. positive-angle hold
-7. positive Bezier curve returning toward zero
-8. final zero-angle hold
-
-Both Bezier curves use 8 y-control points. Their x-control points are fixed and dense near both ends:
-
-```text
-x_i = 0.5 - 0.5 * cos(pi * i / (controlCount - 1))
-```
-
-The control points are allowed to be nonmonotone in angle.
+The climb no-chatter result uses unrestricted per-frame L-BFGS-B, reversal regularization, and Java-exact coordinate refinement while limiting the cycle to four pitch-direction changes. The horizontal no-chatter result uses total-variation trend filtering, low-frequency correction, and a short monotone bridge. Neither approach globally blurs the waveform: an optimal Elytra cycle can contain real discontinuities, and those jumps are preserved. Earlier Fourier and B-spline experiments remain in `solvers/` and are discussed in [docs/solver-method.md](docs/solver-method.md).
 
 ## Current results
 
 | Result | Summary | Data | Plot |
 |---|---:|---|---|
-| Raw per-frame L-BFGS-B max-climb reference | period `255 tick`, climb `1.562324772 blocks/s`, dy `+19.919641`; severe pitch jitter | `results/lbfgsb-max-climb-raw` | ![](docs/images/lbfgsb-max-climb-raw-en.png) |
-| Interpretable segmented fastest climb | period `254 tick`, climb `1.547442 blocks/s`, dy `+19.652515`, horizontal `22.732565 blocks/s` | `results/fastest-climb-rate` | ![](docs/images/fastest-climb-rate-en.png) |
-| Fastest steady-state horizontal speed with nonnegative height | period `357 tick`, horizontal `32.993197 blocks/s`, dy `+0.0000608` | `results/fastest-horizontal-speed` | ![](docs/images/fastest-horizontal-speed-en.png) |
-| Periodic no-drop with initial speed | period `170 tick`, initial velocity `(0.317616, 0.021783)`, height span `25.803350`, dy `+0.000138` | `results/periodic-vx025-no-drop` | ![](docs/images/periodic-vx025-no-drop-en.png) |
-| Periodic height +1 with initial speed | period `179 tick`, initial velocity `(0.321915, 0.089330)`, height span `28.522724`, dy `+1.003298` | `results/periodic-gain-one` | ![](docs/images/periodic-gain-one-en.png) |
-| From rest, gain at least 2 blocks with minimum drop | minimum initial height `35.1216888246`, target `217 tick`, target x `162.930961` | `results/from-rest-gain-two` | ![](docs/images/from-rest-gain-two-en.png) |
-| From rest, return to original height with minimum drop | minimum initial height `32.3476213893`, return `208 tick`, return x `150.941124` | `results/from-rest-return-height` | ![](docs/images/from-rest-return-height-en.png) |
+| Minimum start height with initial speed (already smooth) | period `162 tick`, initial velocity `(0.332244, 0.079996)`, height span `25.560603`, dy `+4.31e-8` | `results/periodic-vx025-no-drop` | ![](docs/images/periodic-vx025-no-drop-en.png) |
+| Maximum climb optimum (per-frame jitter allowed) | period `255 tick`, climb `1.561550761 blocks/s`, dy `+19.909772`; circular RMS delta `36.086 degrees/tick` | `results/lbfgsb-max-climb-raw` | ![](docs/images/lbfgsb-max-climb-raw-en.png) |
+| Maximum climb, no chatter | period `254 tick`, climb `1.552981247 blocks/s`, dy `+19.722862`; unrestricted per-frame curve with four circular direction changes | `results/fastest-climb-rate` | ![](docs/images/fastest-climb-rate-en.png) |
+| Fastest non-dropping horizontal flight optimum (per-frame jitter allowed) | period `357 tick`, horizontal `33.022449116 blocks/s`, dy `+5.90e-8` | `results/fastest-horizontal-speed` | ![](docs/images/fastest-horizontal-speed-en.png) |
+| Fastest non-dropping horizontal flight, no chatter | period `357 tick`, horizontal `33.011007670 blocks/s`, dy `+0.000630`; only `0.03465%` slower | `results/fastest-horizontal-speed-smooth` | ![](docs/images/fastest-horizontal-speed-smooth-en.png) |
 
-The raw L-BFGS-B result directly optimizes every tick's pitch angle after burn-in to periodic steady state: ticks `0..164` are constrained to nose-down or level, and ticks `165..254` are constrained to nose-up or level. Its RMS frame-to-frame pitch change is about `36.16 degrees/tick`, with `90 degrees/tick` maximum jumps. The segmented climb strategy is slightly slower, but it is the interpretable eight-segment version used by the rest of this project. Reproduce the raw search with `solvers/lbfgsb_max_climb.py`.
+All five headline waveforms were validated with the Java-exact `Mth.sin/cos` lookup behavior. In particular, the older continuous-trigonometry climb figure `1.562324772 blocks/s` is not used as the deployable metric: exact `+90 degrees` lies on a lookup-table boundary. The current jittery climb result stays inside that boundary and achieves `1.561550761 blocks/s` in the Java-exact model.
+
+All deployable periodic waveforms are phase-rotated so tick `0` is the highest steady-state point. If the maximum occurs at the cycle endpoint, that endpoint is the same control phase as tick `0` of the next cycle and no array rotation is needed.
 
 Each result folder contains:
 
@@ -90,7 +76,7 @@ For direct reuse, the deployable strategy parameter files and per-tick waveforms
 
 - `strategies/*/parameters.json`
 - `strategies/*/waveform.csv`
-- `strategies/*/best_params.csv` for the two periodic segmented-search results
+- `strategies/*/best_params.csv`
 
 ## Web simulator
 
@@ -117,10 +103,10 @@ Controls:
 Default cycle order:
 
 ```text
-start +0 (>32 m) -> start +2 (>35 m) -> initial-speed no-drop (26 m span) -> height +1 (28 m span) -> smooth fastest climb (20 m/cycle, start >75 m) -> jittery fastest climb (20 m/cycle, start >75 m) -> fastest horizontal (33 m/s, start >142 m)
+start +0 (>32 m) -> start +2 (>35 m) -> minimum start with initial speed (25.56 m) -> height +1 (28 m span) -> no-chatter max climb (1.553 m/s) -> max-climb optimum (per-frame jitter allowed, 1.562 m/s) -> no-chatter horizontal (33.011 m/s) -> horizontal optimum (per-frame jitter allowed, 33.022 m/s)
 ```
 
-All embedded mod strategies are stored as per-frame CSV resources and loop while Elytra Optima is enabled.
+All embedded mod strategies are stored as per-frame CSV resources and loop while Elytra Optima is enabled. Periodic strategies start at their highest-point phase.
 
 ## Reproducing and extending
 
@@ -128,8 +114,12 @@ All embedded mod strategies are stored as per-frame CSV resources and loop while
 - `solvers/audit_segmented_local.cpp`: local auditor/refiner for segmented periodic candidates.
 - `solvers/nonperiodic_return_optimize.cpp`: nonperiodic from-rest return/gain-target optimizer.
 - `solvers/lbfgsb_max_climb.py`: direct per-frame L-BFGS-B reproduction script for the raw jittery max-climb reference.
+- `solvers/milp_exact_objective_refine.py`: Java-exact coordinated frame refinement for climb and constrained horizontal speed.
+- `solvers/structural_period_exact.py`: insertion/deletion continuation across neighboring period lengths.
+- `solvers/optimize_smooth_correction.py`: jump-preserving TV and low-frequency correction for no-chatter variants.
 - `solvers/fourier_optimize.cpp`, `solvers/bspline_optimize.cpp`, `solvers/framewise_optimize.cpp`: exploratory parameterizations used before settling on the segmented curve.
-- `scripts/plot_quadrants.py`: regenerate the Chinese and English quadrant plots from the CSV result files.
-- `scripts/plot_lbfgsb_max_climb_raw.py`: regenerate the Chinese and English quadrant plots for the raw L-BFGS-B max-climb reference.
+- `scripts/refresh_latest_strategy_metadata.py`: recompute canonical metrics and mirrored strategy metadata from the checked-in CSV files.
+- `scripts/rotate_periodic_results_to_highest.py`: normalize deployable periodic waveforms to the highest-point phase.
+- `scripts/plot_latest_three_tasks.py`: regenerate the Chinese and English quadrant plots for the three current objectives.
 
-For the search narrative, see [docs/solver-method.md](docs/solver-method.md).
+For the general search narrative, see [docs/solver-method.md](docs/solver-method.md). The current robust method for the minimum steady-state height-span problem, including practical lessons and failed search directions, is documented in [docs/minimum-height-span-optimization.md](docs/minimum-height-span-optimization.md).

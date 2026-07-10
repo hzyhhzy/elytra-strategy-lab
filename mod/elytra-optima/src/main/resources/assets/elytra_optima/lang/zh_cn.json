@@ -3,5 +3,5 @@
   "key.elytra_optima.toggle": "开关 Elytra Optima",
   "key.elytra_optima.cycle_strategy": "切换策略",
   "modmenu.nameTranslation.elytra_optima": "Elytra Optima",
-  "modmenu.descriptionTranslation.elytra_optima": "按键：H 开关，J 切换策略。\nGitHub：https://github.com/hzyhhzy/elytra-strategy-lab\n只控制俯仰角的鞘翅最优策略 mod，内置起步+0、起步+2、有初速不掉高、高度+1、平滑最大升速、抖动最大升速、最快水平速度等逐帧策略。"
+  "modmenu.descriptionTranslation.elytra_optima": "按键：H 开关，J 切换策略。\nGitHub：https://github.com/hzyhhzy/elytra-strategy-lab\n只控制俯仰角的鞘翅最优策略 mod：有初速最低起步、无抖版本，以及不禁止逐帧抖动的最大升速和最快水平速度最优解。"
 }

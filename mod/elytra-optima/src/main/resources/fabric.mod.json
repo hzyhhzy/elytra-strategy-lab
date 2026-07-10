@@ -3,7 +3,7 @@
   "id": "elytra_optima",
   "version": "${version}",
   "name": "Elytra Optima",
-  "description": "Keys: H toggles Elytra Optima, J cycles strategies.\nGitHub: https://github.com/hzyhhzy/elytra-strategy-lab\nPitch-only Elytra strategy mod using optimized flight profiles, including start +0, start +2, initial-speed no-drop, height +1, smooth climb, jittery climb, and fastest horizontal strategies.",
+  "description": "Keys: H toggles Elytra Optima, J cycles strategies. GitHub: https://github.com/hzyhhzy/elytra-strategy-lab Pitch-only Elytra strategy mod with optimized profiles: minimum-start-height with initial speed, no-chatter variants, and unrestricted optima where per-frame jitter is allowed.",
   "icon": "assets/elytra_optima/icon.png",
   "authors": [
     "hzyhhzy",

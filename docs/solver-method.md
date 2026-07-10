@@ -1,6 +1,6 @@
 # Solver Method
 
-This note describes the search route that led to the current segmented strategies. It is intentionally separate from the main README so the project page can stay readable.
+This note describes the search route that led to the current periodic strategies. It is intentionally separate from the main README so the project page can stay readable.
 
 ## 1. Exact simulator first
 
@@ -73,22 +73,67 @@ The optimizer controls durations, the negative hold angle, and the y coordinates
 
 The periodic optimizer simulates multiple cycles until the velocity state becomes periodic enough, then scores a single steady-state cycle.
 
-Two main objectives were retained:
+Three current objectives are retained:
 
 - maximize average horizontal speed subject to nonnegative height change,
-- maximize average climb rate.
+- maximize average climb rate,
+- minimize the steady-state height span subject to nonnegative height change (equivalently, minimum start height with the optimized initial speed).
 
 The final candidates are in:
 
 - `results/fastest-horizontal-speed`
+- `results/fastest-horizontal-speed-smooth`
+- `results/lbfgsb-max-climb-raw`
 - `results/fastest-climb-rate`
+- `results/periodic-vx025-no-drop`
 
 The relevant sources are:
 
 - `solvers/segmented_sampled_optimize.cpp`
 - `solvers/audit_segmented_local.cpp`
 
-## 7. Nonperiodic from-rest searches
+## 7. Java-exact coordinated frame refinement
+
+The strongest recent candidates are not limited to the historical segmented
+Bezier family. Per-frame candidates are first generated in a smooth relaxation,
+then accepted and refined only with the Java-exact float lookup model.
+
+For an active constraint such as `dy >= 0`, a one-frame coordinate move often
+cannot improve the objective: a speed-improving move may lose a tiny amount of
+height and needs another frame to compensate. The final refinement therefore
+enumerates Java-quantized per-frame moves and uses small mixed-integer programs
+to select coordinated groups of frames. Every selected group is re-evaluated in
+the full nonlinear periodic simulator before it is accepted.
+
+No smoothness penalty is used for the optimum where per-frame jitter is allowed. Endpoint moves such as
+`0/90-degree` duty-cycle control are explicitly allowed because rapid
+alternation can be a real discrete-time optimum rather than numerical noise.
+
+## 8. Jump-preserving no-chatter variants
+
+The practical variants remove rapid back-and-forth pitch reversals without
+requiring the whole waveform to be continuous.
+
+For maximum climb, the current no-chatter result no longer uses a forced
+segment family. All `254` frame angles are optimized by L-BFGS-B. A robust
+reversal loss penalizes alternating finite differences without penalizing a
+single real jump, and Java-exact coordinate refinement accepts only waveforms
+with at most four circular pitch-direction changes above `0.001 degrees/tick`.
+It reaches `1.552981247 blocks/s`.
+
+For horizontal speed, the pipeline is:
+
+1. total-variation trend filtering to collapse high-frequency alternation;
+2. low-frequency cubic correction while retaining the physical objective and,
+   for horizontal flight, the `dy >= 0` constraint;
+3. short monotone bridges for any residual staircase chatter.
+
+Real phase changes remain instantaneous. The resulting tradeoffs are:
+
+- horizontal: `33.022449116` to `33.011007670 blocks/s` (`0.03465%` loss);
+- climb: `1.561550761` to `1.552981247 blocks/s` (`0.5488%` loss).
+
+## 9. Nonperiodic from-rest searches
 
 For launch-from-rest problems, the initial state is:
 
@@ -112,12 +157,21 @@ The relevant source is:
 
 - `solvers/nonperiodic_return_optimize.cpp`
 
-## 8. Replotting results
+## 10. Constrained height-span search
+
+The minimum steady-state height-span problem needs a more careful constrained
+pipeline than the original exploratory searches. Its current method and the
+lessons learned from finite-difference, active-extremum, quantization, period,
+and multi-phase searches are documented separately in
+[minimum-height-span-optimization.md](minimum-height-span-optimization.md).
+
+## 11. Replotting results
 
 Run:
 
 ```powershell
-python scripts/plot_quadrants.py
+python scripts/refresh_latest_strategy_metadata.py
+python scripts/plot_latest_three_tasks.py
 ```
 
 This regenerates the Chinese and English images under `docs/images` from the result CSV files.

@@ -66,14 +66,14 @@
       id: "maxClimb",
       label: "最大爬升速度",
       shortLabel: "爬升",
-      info: "254 tick · 20 m/cycle · dy +19.653",
+      info: "254 tick · 1.553 m/s · dy +19.723",
       fileName: "fastest-climb-rate/waveform.csv",
     }),
     Object.freeze({
       id: "hardSpeed",
       label: "最快水平巡航",
       shortLabel: "巡航",
-      info: "357 tick · 33.0 m/s · dy +0.000061",
+      info: "357 tick · 33.02 m/s · dy +0.000000037",
       fileName: "fastest-horizontal-speed/waveform.csv",
     }),
   ]);
@@ -612,7 +612,7 @@
     hardSpeed: Object.freeze({
       label: "高速巡航",
       shortLabel: "巡航",
-      info: "357 tick · 32.993 b/s · dy +0.000061",
+      info: "357 tick · 33.022 b/s · dy +0.000000037",
       periodTicks: 357,
       segments: Object.freeze({
         negativeConstantTicks: 10,
@@ -649,7 +649,7 @@
     maxClimb: Object.freeze({
       label: "最大爬升",
       shortLabel: "爬升",
-      info: "254 tick · climb +1.547 b/s · dy +19.653",
+      info: "254 tick · climb +1.553 b/s · dy +19.723",
       periodTicks: 254,
       segments: Object.freeze({
         negativeConstantTicks: 2,

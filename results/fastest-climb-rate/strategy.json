@@ -1,69 +1,37 @@
 {
-  "format": "elytra-segmented-bezier-v1",
-  "name": "max_climb_8_control_nonmonotone",
-  "description": "Maximize steady-state height gain rate per second.",
+  "format": "elytra-framewise-periodic-v2",
+  "name": "max_climb_no_chatter_java_exact",
+  "description": "Unrestricted per-frame no-chatter counterpart of the maximum steady-state climb strategy, retaining real phase jumps without rapid pitch alternation.",
+  "variant": "no-chatter practical",
   "tickRate": 20,
+  "periodTicks": 254,
+  "optimizerSplitTickBeforePhaseRotation": -1,
+  "phaseOrigin": "highest steady-state point",
+  "phaseRotationTicks": 0,
   "angleUnit": "degrees",
   "angleConvention": "positive angle means nose-up; negative angle means nose-down",
   "minecraftPitchConvention": "minecraft_pitch_degrees = -angle_degrees",
-  "optimizationTarget": "max_climb_rate",
-  "controlPointSpacing": {
-    "type": "cosine_endpoint_dense",
-    "formula": "x_i = 0.5 - 0.5 * cos(pi * i / (controlCount - 1))"
+  "optimizationTarget": "max_climb_rate_without_chatter",
+  "javaExactValidation": true,
+  "shortPeriodChatterRemoved": true,
+  "method": "Per-frame L-BFGS-B with reversal regularization, a four-direction-change topology limit, and Java-exact coordinate refinement",
+  "files": {
+    "waveform": "waveform.csv",
+    "trajectory": "trajectory.csv"
   },
-  "controlCount": {
-    "negativeBezier": 8,
-    "positiveBezier": 8
-  },
-  "allowNonMonotoneControls": true,
-  "periodTicks": 254,
-  "segments": {
-    "negativeConstantTicks": 2,
-    "negativeTransitionLinearTicks": 5,
-    "negativeBezierTicks": 141,
-    "holdZeroAfterNegativeTicks": 15,
-    "positiveRampLinearTicks": 4,
-    "positiveHoldTicks": 0,
-    "positiveBezierToZeroTicks": 83,
-    "holdZeroEndTicks": 4
-  },
-  "negativeConstantAngle": -83.44910138799413,
-  "negativeBezierControls": [
-    -21.507408848406726,
-    -31.064412051040822,
-    -17.75203519264177,
-    -63.83111872689089,
-    -5.024003861649917,
-    -83.57492395202101,
-    -19.020736082912922,
-    -62.2599218701962
-  ],
-  "positiveBezierControls": [
-    80.88135214090949,
-    59.766059051049844,
-    26.760085044938684,
-    33.961915704001306,
-    7.911228156821989,
-    22.564579953207456,
-    10.025017993419707,
-    0
-  ],
   "steadyStateMetrics": {
-    "avgHorizontalBlocksPerSecond": 22.732564635119335,
-    "dyBlocksPerCycle": 19.652514698907567,
-    "dxBlocksPerCycle": 288.70357086601553,
-    "climbRateBlocksPerSecond": 1.5474421022761864,
-    "meanAbsDeltaDegreesPerTick": 1.6148265079957254,
-    "rmsDeltaDegreesPerTick": 7.272227042865235,
-    "maxAbsDeltaDegreesPerTick": 83.44910138799413,
-    "cyclesUsedForValidation": 14,
+    "avgHorizontalBlocksPerSecond": 22.746610222203515,
+    "climbRateBlocksPerSecond": 1.5529812471325877,
+    "dxBlocksPerCycle": 288.8819498219846,
+    "dyBlocksPerCycle": 19.722861838583864,
+    "heightSpanBlocks": 93.48371178599731,
+    "minRelativeYBlocks": -73.76084994741345,
+    "maxRelativeYBlocks": 19.722861838583864,
+    "meanAbsDeltaDegreesPerTick": 1.920598356457606,
+    "rmsDeltaDegreesPerTick": 9.079804663353212,
+    "maxAbsDeltaDegreesPerTick": 89.97399999999999,
+    "minAngleDegrees": -89.99,
+    "maxAngleDegrees": 89.99,
     "converged": true
-  },
-  "sourceArtifacts": {
-    "paramsCsv": "../segmented_bezier8_cos_nonmono_climb_local_audit_final/best_params.csv",
-    "waveformCsv": "../segmented_bezier8_cos_nonmono_climb_local_audit_final/best_waveform.csv",
-    "waveformSimpleCsv": "../segmented_bezier8_cos_nonmono_climb_local_audit_final/best_waveform_simple.csv",
-    "trajectoryCsv": "../segmented_bezier8_cos_nonmono_climb_local_audit_final/best_trajectory.csv",
-    "plotPng": "../segmented_bezier8_cos_nonmono_climb_local_audit_final/segmented_bezier8_cos_nonmono_climb_local_audit_final.png"
   }
 }

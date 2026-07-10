@@ -1,0 +1,17 @@
+field,value
+format,elytra-framewise-periodic-v2
+variant,no-chatter practical
+optimizationTarget,max_horizontal_speed_with_dy_ge_0_and_no_chatter
+period,357
+optimizerSplitBeforePhaseRotation,271
+phaseRotationTicks,5
+avgHorizontal,33.01100767047044
+climbRate,3.526872038830385e-05
+dx,589.2464869178974
+dy,0.0006295466589312237
+heightSpan,134.39402460662322
+meanAbsDelta,1.0177310103641923
+rmsDelta,5.948968159741932
+maxAbsDelta,87.86303361469881
+noShortPeriodChatter,1
+method,"TV trend filtering (weight 23), low-frequency cubic correction, and a monotone local bridge"

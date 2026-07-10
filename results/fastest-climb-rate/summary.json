@@ -1,0 +1,19 @@
+{
+  "name": "max_climb_no_chatter_java_exact",
+  "periodTicks": 254,
+  "phaseOrigin": "highest steady-state point",
+  "phaseRotationTicks": 0,
+  "avgHorizontalBlocksPerSecond": 22.746610222203515,
+  "climbRateBlocksPerSecond": 1.5529812471325877,
+  "dxBlocksPerCycle": 288.8819498219846,
+  "dyBlocksPerCycle": 19.722861838583864,
+  "heightSpanBlocks": 93.48371178599731,
+  "minRelativeYBlocks": -73.76084994741345,
+  "maxRelativeYBlocks": 19.722861838583864,
+  "meanAbsDeltaDegreesPerTick": 1.920598356457606,
+  "rmsDeltaDegreesPerTick": 9.079804663353212,
+  "maxAbsDeltaDegreesPerTick": 89.97399999999999,
+  "minAngleDegrees": -89.99,
+  "maxAngleDegrees": 89.99,
+  "converged": true
+}

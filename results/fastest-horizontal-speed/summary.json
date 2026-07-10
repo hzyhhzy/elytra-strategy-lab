@@ -1,0 +1,19 @@
+{
+  "name": "fastest_horizontal_jitter_java_exact",
+  "periodTicks": 357,
+  "phaseOrigin": "highest steady-state point",
+  "phaseRotationTicks": 5,
+  "avgHorizontalBlocksPerSecond": 33.022449115920296,
+  "climbRateBlocksPerSecond": 3.3044371471917306e-09,
+  "dxBlocksPerCycle": 589.4507167191773,
+  "dyBlocksPerCycle": 5.89842030773724e-08,
+  "heightSpanBlocks": 134.54796829753198,
+  "minRelativeYBlocks": -134.54796823854778,
+  "maxRelativeYBlocks": 5.89842030773724e-08,
+  "meanAbsDeltaDegreesPerTick": 2.524251287369189,
+  "rmsDeltaDegreesPerTick": 10.588436191523458,
+  "maxAbsDeltaDegreesPerTick": 90.0,
+  "minAngleDegrees": -90.0,
+  "maxAngleDegrees": 89.95271850252928,
+  "converged": true
+}

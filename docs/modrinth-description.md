@@ -19,52 +19,42 @@ Every time the mod is turned on, it starts from the minimum-start-height strateg
 
 ## Strategy Results
 
-The full project currently includes four optimized strategy results. The in-game mod exposes the most practical looping profiles, and the web simulator in the GitHub repository includes all four.
+The current headline results cover three periodic objectives. Maximum climb and fastest horizontal flight each include both the unrestricted optimum, where per-frame jitter is allowed, and a jump-preserving no-chatter version.
 
-### 1. Minimum-start-height launch, gain at least 2 blocks
+### 1. Minimum start height with initial speed
 
-This strategy starts from rest and minimizes the initial height needed to complete a launch that ends at least 2 blocks higher than the starting height.
+This periodic strategy minimizes the steady-state height span while keeping the cycle height nonnegative. Viewed from the highest point of the cycle, it is the minimum start height for the optimized initial velocity.
 
-- Minimum initial height: about `35.12 m`
-- Target: `217 tick`
-- Horizontal distance at target: about `162.93 m`
-- In-game role: default launch / minimum-start-height profile
+- Period: `162 tick`
+- Height span / minimum start height: `25.560603 m`
+- Cycle height change: about `+4.31e-8 m`
+- The published waveform is already smooth
 
-![Minimum-start-height launch, gain at least 2 blocks](https://raw.githubusercontent.com/hzyhhzy/elytra-strategy-lab/main/docs/images/from-rest-gain-two-en.png)
+![Minimum start height with initial speed](https://raw.githubusercontent.com/hzyhhzy/elytra-strategy-lab/main/docs/images/periodic-vx025-no-drop-en.png)
 
-### 2. Minimum-start-height launch, return to original height
+### 2. Maximum steady-state climb
 
-This is the companion from-rest result for the `start +0` condition: it minimizes the starting height needed to return to the original height without net height loss.
+The unrestricted per-frame result reaches `1.561550761 m/s` in the Java-exact model and contains strong pitch alternation. The no-chatter version retains real phase jumps but removes rapid back-and-forth motion.
 
-- Minimum initial height: about `32.35 m`
-- Return time: `208 tick`
-- Horizontal distance at return: about `150.94 m`
-- Useful as a baseline for low-height launch behavior
+- Jittery optimum: `1.561550761 m/s`, `+19.909772 m/cycle`
+- No-chatter unrestricted per-frame version: `1.552981247 m/s`, `+19.722862 m/cycle`
+- Periods: `255 tick` jittery / `254 tick` no-chatter
 
-![Minimum-start-height launch, return to original height](https://raw.githubusercontent.com/hzyhhzy/elytra-strategy-lab/main/docs/images/from-rest-return-height-en.png)
+![Jittery maximum climb](https://raw.githubusercontent.com/hzyhhzy/elytra-strategy-lab/main/docs/images/lbfgsb-max-climb-raw-en.png)
 
-### 3. Fastest steady-state climb
+![No-chatter maximum climb](https://raw.githubusercontent.com/hzyhhzy/elytra-strategy-lab/main/docs/images/fastest-climb-rate-en.png)
 
-This periodic strategy is optimized for average height gain per second after reaching a repeated cycle. It is not just a hand-tuned curve; it comes from numerical search over the Elytra tick model and then segmented-curve refinement.
+### 3. Fastest steady-state horizontal flight with nonnegative height
 
-- Period: `254 tick`
-- Height gain: about `19.65 m/cycle`
-- Average climb rate: about `1.55 m/s`
-- Average horizontal speed: about `22.73 m/s`
-- Recommended start height: above about `75 m`
+This objective maximizes average horizontal speed while keeping the cycle's net height change nonnegative. The no-chatter version is only `0.03465%` slower than the unrestricted optimum.
 
-![Fastest steady-state climb](https://raw.githubusercontent.com/hzyhhzy/elytra-strategy-lab/main/docs/images/fastest-climb-rate-en.png)
-
-### 4. Fastest steady-state horizontal flight with nonnegative height
-
-This periodic strategy maximizes average horizontal speed while keeping the cycle's net height change nonnegative. In other words, it is a high-speed cruise profile that does not rely on losing height over the repeated cycle.
-
+- Jittery optimum: `33.022449116 m/s`, dy about `+5.90e-8 m`
+- No-chatter version: `33.011007670 m/s`, dy about `+0.000630 m`
 - Period: `357 tick`
-- Average horizontal speed: about `32.99 m/s`
-- Net cycle height change: about `+0.00006 m`
-- Recommended start height: above about `142 m`
 
-![Fastest steady-state horizontal flight](https://raw.githubusercontent.com/hzyhhzy/elytra-strategy-lab/main/docs/images/fastest-horizontal-speed-en.png)
+![Jittery fastest horizontal flight](https://raw.githubusercontent.com/hzyhhzy/elytra-strategy-lab/main/docs/images/fastest-horizontal-speed-en.png)
+
+![No-chatter fastest horizontal flight](https://raw.githubusercontent.com/hzyhhzy/elytra-strategy-lab/main/docs/images/fastest-horizontal-speed-smooth-en.png)
 
 ## What This Mod Is, And Is Not
 

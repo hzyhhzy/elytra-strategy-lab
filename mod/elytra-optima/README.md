@@ -33,13 +33,16 @@ If Mod Menu is installed, Elytra Optima provides a config button on the mod deta
 
 - `start_plus_0`: `Start +0 (>32 m)` / `起步+0（>32m）`; `208 tick`, returns to the launch height from rest.
 - `start_plus_2`: `Start +2 (>35 m)` / `起步+2（>35m）`; `217 tick`, reaches at least `+2` blocks from rest.
-- `vx025_no_drop`: `Initial-speed no-drop (26 m span)` / `有初速不掉高（落差26m）`; `170 tick`, periodic strategy with initial horizontal speed, cycle height change about `+0.00014`.
+- `vx025_no_drop`: `Minimum start with initial speed (25.56 m)` / `有初速最低起步（25.56m）`; `162 tick`, periodic minimum-start-height strategy with height span about `25.560603 m` and cycle height change about `+0.0000000431`.
 - `periodic_gain1`: `Height +1 (28 m span)` / `高度+1（落差28m）`; `179 tick`, periodic strategy with cycle height change about `+1.003`.
-- `smooth_max_climb`: `Smooth fastest climb (20 m/cycle, start >75 m)` / `平滑最大提升速度（20m/cycle，起步高度>75m）`; `254 tick`, climb rate about `+1.547 b/s`, cycle height change about `+19.653`.
-- `jagged_max_climb_255`: `Jittery fastest climb (20 m/cycle, start >75 m)` / `抖动最大提升速度（20m/cycle，起步高度>75m）`; `255 tick`, raw per-frame L-BFGS-B climb reference, climb rate about `+1.562 b/s`.
-- `hard_speed`: `Fastest horizontal (33 m/s, start >142 m)` / `最快水平速度（33m/s，起步高度>142m）`; `357 tick`, steady-state horizontal speed about `32.993 b/s`, cycle height change about `+0.000061`.
+- `smooth_max_climb`: `No-chatter max climb (1.553 m/s, start >74 m)` / `无抖最大升速（1.553m/s，起步>74m）`; `254 tick`, unrestricted per-frame climb rate `1.552981 b/s`, with real phase jumps and four circular direction changes over the cycle.
+- `jagged_max_climb_255`: `Max-climb optimum (per-frame jitter allowed; 1.562 m/s, start >75 m)` / `最大升速最优解（不禁止逐帧抖动；1.562m/s，起步>75m）`; `255 tick`, Java-exact unrestricted optimum with climb rate `1.561551 b/s`.
+- `smooth_horizontal`: `No-chatter horizontal (33.011 m/s, start >135 m)` / `无抖最快水平（33.011m/s，起步>135m）`; `357 tick`, non-dropping horizontal strategy without rapid pitch reversals.
+- `hard_speed`: `Horizontal optimum (per-frame jitter allowed; 33.022 m/s, start >135 m)` / `最快水平最优解（不禁止逐帧抖动；33.022m/s，起步>135m）`; `357 tick`, Java-exact unrestricted optimum with horizontal speed `33.022449 b/s` and cycle height change `+5.90e-8`.
 
 All built-in strategies are stored as per-frame CSV resources under `src/main/resources/assets/elytra_optima/strategies/`, with `tick,angle` columns. The `angle` column uses the simulator convention: positive means nose-up.
+
+All periodic resources are phase-rotated so tick `0` is the highest steady-state point. A maximum at the cycle endpoint is equivalent to tick `0` of the next cycle.
 
 Every time Elytra Optima is turned on, it starts on the configured default strategy. On first launch, the mod writes `config/elytra-optima.json`:
 
@@ -53,6 +56,7 @@ Every time Elytra Optima is turned on, it starts on the configured default strat
     "periodic_gain1",
     "smooth_max_climb",
     "jagged_max_climb_255",
+    "smooth_horizontal",
     "hard_speed"
   ]
 }

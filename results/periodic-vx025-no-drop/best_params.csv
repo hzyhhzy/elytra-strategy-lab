@@ -1,0 +1,17 @@
+field,value
+format,elytra-framewise-periodic-v2
+variant,smooth optimum
+optimizationTarget,min_height_span_with_dy_ge_0
+period,162
+optimizerSplitBeforePhaseRotation,100
+phaseRotationTicks,0
+avgHorizontal,16.259459514555545
+climbRate,5.325507843354258e-09
+dx,131.7016220678999
+dy,4.313661353116949e-08
+heightSpan,25.560603171783995
+meanAbsDelta,2.0902936264041267
+rmsDelta,8.244479676456471
+maxAbsDelta,89.53746806015683
+noShortPeriodChatter,1
+method,Constrained steady-state height-span optimization with Java-exact coordinated refinement
