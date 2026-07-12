@@ -1,0 +1,13 @@
+{
+  "mode": "convex_hull_boundary",
+  "best_horizontal_bps": 75.196540995304105,
+  "best_vx": 3.7598270497652053,
+  "best_vy": -0.38766364187877211,
+  "best_tick": 1603,
+  "ticks_run": 2103,
+  "angle_step_deg": 0.5,
+  "simplify_eps": 2.9999999999999999e-07,
+  "hull_vertices": 2797,
+  "max_candidate_count": 1016494,
+  "elapsed_seconds": 183.27272479999999
+}

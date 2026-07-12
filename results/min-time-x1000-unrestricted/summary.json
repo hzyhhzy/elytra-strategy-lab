@@ -1,0 +1,16 @@
+{
+  "horizon": 403,
+  "source": "dp_4001x513_then_lbfgsb",
+  "dpInterpolatedValue": 1000.4932097751331,
+  "dpRolloutX": 1000.4928021366342,
+  "continuousX": 1000.4928062037791,
+  "x": 1000.4928052963339,
+  "y": -360.06860752278413,
+  "vx": 3.3430948930735815,
+  "vy": -0.20687805893624087,
+  "firstTickAt1000": 403,
+  "coordinateCalls": 6785,
+  "coordinateAccepts": 34,
+  "optimizerIterations": 66,
+  "optimizerSuccess": true
+}

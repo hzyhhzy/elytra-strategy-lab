@@ -1,0 +1,52 @@
+{
+  "format": "elytra-nonperiodic-peak-horizontal-speed-v1",
+  "description": "Maximize instantaneous horizontal speed from the ideal vertical-terminal-dive velocity with unbounded height.",
+  "tickRate": 20,
+  "angleUnit": "degrees",
+  "angleConvention": "positive angle means nose-up; Minecraft pitch uses the opposite sign",
+  "initialState": {
+    "x": 0,
+    "y": 0,
+    "vx": 0,
+    "vy": -3.920003814700875,
+    "interpretation": "limiting velocity after an arbitrarily long vertical dive"
+  },
+  "objective": "maximize max_t(20 * vx_t)",
+  "constraints": {
+    "searchPitchBoundsDegrees": [-90, 90],
+    "publishedPitchBoundsDegrees": [-90, 0],
+    "height": "unbounded",
+    "terminalState": "unconstrained",
+    "smoothness": "none"
+  },
+  "periodic": false,
+  "frameCount": 1572,
+  "peak": {
+    "tick": 1572,
+    "horizontalSpeedBlocksPerSecond": 75.19654069276706,
+    "vxBlocksPerTick": 3.7598270346383527,
+    "vyBlocksPerTick": -0.3876636418787721
+  },
+  "terminalState": {
+    "x": 4987.707158865041,
+    "y": -2216.7686986002523,
+    "vx": 3.7598270346383527,
+    "vy": -0.3876636418787721
+  },
+  "controlStatistics": {
+    "minus90DegreeFrames": 1173,
+    "zeroDegreeFrames": 398,
+    "otherFrames": 1,
+    "otherAngleDegrees": -59,
+    "rmsPitchDeltaDegrees": 62.36033152927014,
+    "maxAbsPitchDeltaDegrees": 90
+  },
+  "optimization": "velocity-grid BFS followed by convex-hull reachability propagation and deterministic path tracing",
+  "validation": {
+    "relaxedConvexBoundaryBlocksPerSecond": 75.19654468549746,
+    "constructivePathBlocksPerSecond": 75.19654069276706,
+    "relaxationGapBlocksPerSecond": 0.0000039927304,
+    "angleStepsCheckedDegrees": [1, 0.5],
+    "status": "strong numerical evidence, not a formal continuous-control proof"
+  }
+}

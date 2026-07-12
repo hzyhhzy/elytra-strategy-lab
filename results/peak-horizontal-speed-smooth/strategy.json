@@ -1,0 +1,49 @@
+{
+  "format": "elytra-nonperiodic-peak-horizontal-speed-smooth-v1",
+  "description": "Smooth cos^2-filtered alternative to the maximum instantaneous horizontal-speed switching path.",
+  "tickRate": 20,
+  "angleUnit": "degrees",
+  "angleConvention": "positive angle means nose-up; Minecraft pitch uses the opposite sign",
+  "initialState": {
+    "x": 0,
+    "y": 0,
+    "vx": 0,
+    "vy": -3.920003814700875,
+    "interpretation": "limiting velocity after an arbitrarily long vertical dive"
+  },
+  "objective": "retain most of the peak horizontal speed while removing per-frame switching",
+  "constraints": {
+    "height": "unbounded",
+    "terminalState": "unconstrained",
+    "pitchBranch": "negative or level"
+  },
+  "periodic": false,
+  "frameCount": 1572,
+  "smoothing": {
+    "domain": "q = cos(pitch)^2",
+    "filter": "one-dimensional Gaussian",
+    "sigmaTicks": 8,
+    "inverseMap": "pitch = -acos(sqrt(q))",
+    "rmsPitchDeltaDegrees": 0.3234449075561561,
+    "maxAbsPitchDeltaDegrees": 2.280444601986492,
+    "minPitchDegrees": -60.838525396678705,
+    "maxPitchDegrees": -11.933566263914711
+  },
+  "peak": {
+    "tick": 1572,
+    "horizontalSpeedBlocksPerSecond": 74.44492169364472,
+    "vxBlocksPerTick": 3.722246084682236,
+    "vyBlocksPerTick": -0.43885524811992543
+  },
+  "terminalState": {
+    "x": 4940.123678228084,
+    "y": -2240.6383559275064,
+    "vx": 3.722246084682236,
+    "vy": -0.43885524811992543
+  },
+  "comparisonToSwitchingPath": {
+    "absoluteLossBlocksPerSecond": 0.7516189991223428,
+    "relativeLossFraction": 0.009995393301312315
+  },
+  "claim": "practical smooth comparison, not a globally optimized smooth-control solution"
+}

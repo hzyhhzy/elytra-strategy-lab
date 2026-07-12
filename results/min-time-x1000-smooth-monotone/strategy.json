@@ -1,0 +1,50 @@
+{
+  "format": "elytra-nonperiodic-minimum-time-x-smooth-monotone-v1",
+  "description": "From rest, minimize the first tick reaching x >= 1000 with a smooth pitch curve increasing monotonically from -90 to 0 degrees.",
+  "tickRate": 20,
+  "angleUnit": "degrees",
+  "angleConvention": "positive angle means nose-up; Minecraft pitch uses the opposite sign",
+  "initialState": {
+    "x": 0,
+    "y": 0,
+    "vx": 0,
+    "vy": 0
+  },
+  "target": {
+    "axis": "x",
+    "thresholdBlocks": 1000,
+    "objective": "minimize first crossing tick"
+  },
+  "constraints": {
+    "pitchStartDegrees": -90,
+    "pitchEndDegrees": 0,
+    "pitchMonotonicity": "nondecreasing",
+    "curve": "clamped cubic B-spline (C2 continuous)",
+    "height": "unbounded",
+    "terminalState": "unconstrained"
+  },
+  "periodic": false,
+  "frameCount": 405,
+  "timeSeconds": 20.25,
+  "splineControlCount": 160,
+  "terminalState": {
+    "x": 1000.0104193714377,
+    "y": -360.3835480375035,
+    "vx": 3.2069101069560686,
+    "vy": -0.17872777861220007
+  },
+  "firstTickAtTarget": 405,
+  "smoothness": {
+    "maxPitchDeltaDegreesPerTick": 1.279601043221092,
+    "rmsSecondDifferenceDegreesPerTickSquared": 0.011223407660965141,
+    "maxAbsSecondDifferenceDegreesPerTickSquared": 0.03499302389080583
+  },
+  "optimization": "monotone softmax spline increments, fixed-horizon L-BFGS-B, then SLSQP curvature minimization with analytic gradients and spline-order continuation",
+  "boundaryValidation": {
+    "controlCount": 400,
+    "xAt403Ticks": 996.020618751137,
+    "xAt404Ticks": 999.341614960449,
+    "xAt405Ticks": 1002.663266669494,
+    "status": "strong numerical evidence, not a formal proof"
+  }
+}

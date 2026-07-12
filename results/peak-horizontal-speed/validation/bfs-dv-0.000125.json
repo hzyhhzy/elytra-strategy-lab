@@ -1,0 +1,20 @@
+{
+  "mode": "reach_only",
+  "best_horizontal_bps": 75.189797788865945,
+  "best_vx": 3.7594898894432971,
+  "best_vy": -0.38860594553540551,
+  "best_tick": 925,
+  "best_cell": 1082729691,
+  "visited_cells": 740788237,
+  "ticks_run": 1055,
+  "angle_step_deg": 1,
+  "dvx": 0.000125,
+  "dvy": 0.000125,
+  "vx_min": 0,
+  "vx_max": 4.2000000000000002,
+  "vy_min": -4.0999999999999996,
+  "vy_max": 0.40000000000000002,
+  "grid_nx": 33600,
+  "grid_ny": 36000,
+  "elapsed_seconds": 3161.9096694999998
+}

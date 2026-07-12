@@ -1,0 +1,18 @@
+{
+  "description": "Best Java-exact fixed-horizon distances found with 400 monotone cubic B-spline controls",
+  "results": [
+    {
+      "frameCount": 403,
+      "x": 996.020618751137
+    },
+    {
+      "frameCount": 404,
+      "x": 999.341614960449
+    },
+    {
+      "frameCount": 405,
+      "x": 1002.663266669494
+    }
+  ],
+  "conclusion": "405 ticks is the first feasible horizon found; this is strong numerical evidence rather than a formal proof."
+}

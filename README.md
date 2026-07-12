@@ -78,6 +78,14 @@ For direct reuse, the deployable strategy parameter files and per-tick waveforms
 - `strategies/*/waveform.csv`
 - `strategies/*/best_params.csv`
 
+## Side studies
+
+- [Minimum time to `x=1000`, unrestricted](docs/minimum-time-x1000.md): from rest with unbounded height and per-frame control, the best validated policy arrives in `403 tick` (`20.15 s`).
+- [Minimum time to `x=1000`, smooth monotone pitch](docs/minimum-time-x1000.md): requiring a C2 curve that rises monotonically from `-90` to `0 degrees` changes the result to `405 tick` (`20.25 s`).
+- [Maximum instantaneous horizontal speed](docs/maximum-instantaneous-horizontal-speed.md): from the ideal vertical-terminal-dive state with unbounded height, a deterministic switching path reaches `75.196540693 blocks/s`; a smooth alternative reaches `74.444921694 blocks/s`.
+
+These are nonperiodic research tasks rather than deployable steady-cycle strategies. The dedicated notes contain the assumptions, optimization methods, boundary checks, plots, and CSV locations.
+
 ## Web simulator
 
 The browser simulator source is under `simulator/`. Open `simulator/index.html` directly in a browser to run it locally. It embeds selected mirrored pitch waveforms through `simulator/strategies-data.js`, with CSV loading kept as a fallback for served copies. The scene uses an x/y coordinate grid and the real simulated trail instead of random waypoint rings.
@@ -117,9 +125,12 @@ All embedded mod strategies are stored as per-frame CSV resources and loop while
 - `solvers/milp_exact_objective_refine.py`: Java-exact coordinated frame refinement for climb and constrained horizontal speed.
 - `solvers/structural_period_exact.py`: insertion/deletion continuation across neighboring period lengths.
 - `solvers/optimize_smooth_correction.py`: jump-preserving TV and low-frequency correction for no-chatter variants.
+- `solvers/reachable_peak_speed_convex.cpp`: velocity-reachability convex-hull search for maximum instantaneous horizontal speed.
+- `solvers/smooth_cos2_strategy.py`: `cos^2(pitch)` Gaussian smoothing for the practical peak-speed comparison.
 - `solvers/fourier_optimize.cpp`, `solvers/bspline_optimize.cpp`, `solvers/framewise_optimize.cpp`: exploratory parameterizations used before settling on the segmented curve.
 - `scripts/refresh_latest_strategy_metadata.py`: recompute canonical metrics and mirrored strategy metadata from the checked-in CSV files.
 - `scripts/rotate_periodic_results_to_highest.py`: normalize deployable periodic waveforms to the highest-point phase.
 - `scripts/plot_latest_three_tasks.py`: regenerate the Chinese and English quadrant plots for the three current objectives.
+- `scripts/plot_peak_horizontal_speed.py`: regenerate the peak-speed side-study plots.
 
 For the general search narrative, see [docs/solver-method.md](docs/solver-method.md). The current robust method for the minimum steady-state height-span problem, including practical lessons and failed search directions, is documented in [docs/minimum-height-span-optimization.md](docs/minimum-height-span-optimization.md).

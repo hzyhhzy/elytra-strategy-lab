@@ -59,6 +59,30 @@ python optimize_smooth_correction.py --source ..\results\fastest-horizontal-spee
 
 Final checked-in waveforms and exact metrics are canonical under `../results/`.
 
+## Maximum instantaneous horizontal speed
+
+This side study starts from the ideal vertical-terminal-dive velocity
+`(vx, vy) = (0, -3.920003814700875)` and leaves height unbounded. The C++ solver
+propagates the reachable velocity boundary with a convex-hull relaxation and
+can retain predecessor information for a deterministic traced path.
+
+```powershell
+cl /nologo /O2 /std:c++20 /EHsc /Fe:reachable_peak_speed_convex.exe reachable_peak_speed_convex.cpp
+.\reachable_peak_speed_convex.exe --out-dir ..\scratch\peak-convex --ticks 3000 --angle-step 1 --simplify-eps 0.0000003 --patience 500 --trace-best
+```
+
+The checked-in deterministic path is under `../results/peak-horizontal-speed`.
+The smoother comparison filters `cos^2(pitch)` rather than pitch itself, then
+maps back to the negative-pitch branch:
+
+```powershell
+python smooth_cos2_strategy.py --source-waveform ..\results\peak-horizontal-speed\waveform.csv --out-dir ..\scratch\peak-smooth --sigma 8
+```
+
+See `../docs/maximum-instantaneous-horizontal-speed.md` for the distinction
+between the constructive path and the convex relaxation, convergence records,
+and the smoothness tradeoff.
+
 ## Historical periodic local audit
 
 ```powershell

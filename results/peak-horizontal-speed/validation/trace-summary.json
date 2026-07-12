@@ -1,0 +1,17 @@
+{
+  "mode": "convex_hull_trace",
+  "best_horizontal_bps": 75.196540692767059,
+  "best_vx": 3.7598270346383527,
+  "best_vy": -0.38766364187877211,
+  "best_tick": 1595,
+  "best_node": 3562430,
+  "ticks_run": 2095,
+  "angle_step_deg": 1,
+  "simplify_eps": 2.9999999999999999e-07,
+  "hull_vertices": 2663,
+  "node_count": 4330174,
+  "max_candidate_count": 500862,
+  "elapsed_seconds": 113.9867175,
+  "deterministic_path": true,
+  "deterministic_length": 1572
+}

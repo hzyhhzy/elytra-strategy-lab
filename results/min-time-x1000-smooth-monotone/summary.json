@@ -1,0 +1,21 @@
+{
+  "frameCount": 405,
+  "controlCount": 160,
+  "targetContinuousX": 1000.01,
+  "x": 1000.0104193714377,
+  "y": -360.3835480375035,
+  "vx": 3.2069101069560686,
+  "vy": -0.17872777861220007,
+  "firstTickAt1000": 405,
+  "curvatureMeanSquare": 0.00012596487952421103,
+  "curvatureRms": 0.011223407660965141,
+  "minAngle": -90.0,
+  "maxAngle": 0.0,
+  "minDelta": 2.0463630789890885e-12,
+  "maxDelta": 1.279601043221092,
+  "maxAbsSecondDelta": 0.03499302389080583,
+  "optimizer": "SLSQP curvature minimization with analytic gradients",
+  "optimizerSuccess": true,
+  "optimizerMessage": "Optimization terminated successfully",
+  "optimizerIterations": 1072
+}

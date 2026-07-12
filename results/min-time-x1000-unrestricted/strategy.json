@@ -1,0 +1,40 @@
+{
+  "format": "elytra-nonperiodic-minimum-time-x-v1",
+  "description": "From rest, minimize the first tick reaching x >= 1000 with unrestricted per-frame pitch and unbounded height.",
+  "tickRate": 20,
+  "angleUnit": "degrees",
+  "angleConvention": "positive angle means nose-up; Minecraft pitch uses the opposite sign",
+  "initialState": {
+    "x": 0,
+    "y": 0,
+    "vx": 0,
+    "vy": 0
+  },
+  "target": {
+    "axis": "x",
+    "thresholdBlocks": 1000,
+    "objective": "minimize first crossing tick"
+  },
+  "constraints": {
+    "pitchBoundsDegrees": [-90, 90],
+    "height": "unbounded",
+    "smoothness": "none",
+    "terminalState": "unconstrained"
+  },
+  "periodic": false,
+  "frameCount": 403,
+  "timeSeconds": 20.15,
+  "terminalState": {
+    "x": 1000.4928052963339,
+    "y": -360.06860752278413,
+    "vx": 3.3430948930735815,
+    "vy": -0.20687805893624087
+  },
+  "firstTickAtTarget": 403,
+  "optimization": "one-dimensional dynamic programming seed, per-frame L-BFGS-B, then Java-exact coordinate refinement",
+  "boundaryValidation": {
+    "rejectedFrameCount": 402,
+    "bestRefinedX": 997.156173329,
+    "status": "strong numerical evidence, not a formal proof"
+  }
+}

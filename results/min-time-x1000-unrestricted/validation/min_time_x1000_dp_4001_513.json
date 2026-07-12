@@ -1,0 +1,12 @@
+{
+  "horizon": 402,
+  "vyPoints": 4001,
+  "controlPoints": 513,
+  "interpolatedValueAtInitialState": 997.1564937259027,
+  "nearestGridPolicyRolloutX": 997.15617130565,
+  "nearestGridPolicyRolloutY": -359.3178710079224,
+  "finalVx": 3.3433571592343005,
+  "finalVy": -0.20682531572467733,
+  "vxValueCoefficient": 97.25834655556554,
+  "elapsedSeconds": 4.356705399986822
+}
